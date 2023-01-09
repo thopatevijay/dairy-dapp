@@ -1,5 +1,5 @@
 import connectMongo from "../../../database/connection";
-import { getUsers, postUser } from "../../../database/controller";
+import { getUsers, postUser, getUserByEmail } from "../../../database/controller";
 
 export default function handler(req, res) {
     connectMongo().catch(() => res.status(405).json({ error: "Error in the Connection" }));
@@ -8,10 +8,11 @@ export default function handler(req, res) {
 
     switch (method) {
         case 'GET':
-            getUsers(req,res);
+            getUsers(req, res);
             break;
         case 'POST':
-            postUser(req,res);
+            // postUser(req,res);
+            getUserByEmail(req, res);
             break;
         default:
             res.setHeader('Allow', ['GET']);
