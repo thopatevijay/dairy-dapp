@@ -1,23 +1,18 @@
-import { useState, useLayoutEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
+import { UserContext } from '../common/Provider/UserProvider';
 
 const Dashboard = () => {
-    const [user, setUser] = useState("");
+    const { user } = useContext(UserContext);
+    const handleLogout = useContext(UserContext).logout;
     const router = useRouter();
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         const userData = JSON.parse(localStorage.getItem('dairy-login'));
-        setUser(userData);
         if (!userData) {
             router.push('/login');
         }
     }, [router]);
-
-
-    const handleLogout = () => {
-        localStorage.removeItem('dairy-login');
-        router.push('/login');
-    }
 
     return (
         <div className="bg-gray-200 min-h-screen flex flex-col justify-center items-center">

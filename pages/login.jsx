@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 
 const LoginPage = () => {
@@ -29,6 +29,14 @@ const LoginPage = () => {
       setError('An error occurred. Please try again later.');
     }
   };
+
+  useEffect(() => {
+    const userData = JSON.parse(localStorage.getItem('dairy-login'));
+    if (userData) {
+        router.push('/dashboard');
+    }
+}, [router]);
+
 
   return (
     <div className="bg-gray-200 min-h-screen flex justify-center items-center">
