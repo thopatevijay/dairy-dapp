@@ -27,7 +27,6 @@ export async function postUser(req, res) {
 export async function getUserByEmail(req, res) {
     try {
         const { email, password } = req.body;
-
         const users = await Users.findOne({ email });
         if (users && password === users.password) {
             console.log('Loged In');
