@@ -3,20 +3,20 @@ import { useRouter } from 'next/router';
 import { UserContext } from '../common/Provider/UserProvider';
 import AccessDenied from "../common/AccessDenied";
 
-const MilkCollector = () => {
+const Distributor = () => {
     const { user } = useContext(UserContext);
     const router = useRouter();
 
-    if (user && user.role !== "milkcollector") {
+    if (user && user.role !== "distributor") {
         setTimeout(() => {
             router.push('/');
         }, 5000);
-        return <AccessDenied requiredRole="Milk Collector"/>
+        return <AccessDenied requiredRole="Distributor"/>
     }
 
     return (
-        <div>Milk collector</div>
+        <div>Distributor</div>
     );
 };
 
-export default MilkCollector;
+export default Distributor;
