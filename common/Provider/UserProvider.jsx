@@ -10,7 +10,7 @@ export const UserProvider = ({ children }) => {
     useEffect(() => {
         const storedUser = JSON.parse(localStorage.getItem('dairy-login'));
         setUser(storedUser);
-    }, []);
+    }, [setUser, router]);
 
     const login = (userData) => {
         localStorage.setItem('dairy-login', JSON.stringify(userData));
