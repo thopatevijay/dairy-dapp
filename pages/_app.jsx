@@ -1,16 +1,20 @@
 import '../styles/globals.css'
-import { UserProvider } from '../common/Provider/UserProvider'
+import { UserProvider, WalletProvider } from '../common/Provider'
 import Navbar from '../common/Navbar'
+import { MetaMaskProvider } from "metamask-react";
 
 function MyApp({ Component, pageProps }) {
   return (
-    <UserProvider>
-      <Navbar />
-      <div className="relative min-h-screen">
-        <Component {...pageProps} />
-      </div>
-    </UserProvider>
-
+    <MetaMaskProvider>
+      <WalletProvider>
+        <UserProvider>
+          <Navbar />
+          <div className="relative min-h-screen">
+            <Component {...pageProps} />
+          </div>
+        </UserProvider>
+      </WalletProvider>
+    </MetaMaskProvider>
   )
 }
 

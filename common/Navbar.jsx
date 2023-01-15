@@ -1,18 +1,19 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { UserContext } from './Provider/UserProvider';
+import { useWalletContext } from './Provider/WalletProvider';
 import { useRouter } from 'next/router';
 
 const Navbar = () => {
     const { user } = useContext(UserContext);
     const [displayedUser, setDisplayedUser] = useState(user);
-
+    const { metaMask, connectToMetaMask } = useWalletContext();
     const handleLogout = useContext(UserContext).logout;
     const router = useRouter();
     const { pathname } = router;
 
     useEffect(() => {
         setDisplayedUser(user);
-      }, [user]);
+    }, [user]);
 
     if (pathname === '/login') {
         return null;
@@ -24,6 +25,9 @@ const Navbar = () => {
                     <span className="text-sm font-medium mr-2">Welcome, {displayedUser && displayedUser.email}</span>
                     <button className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600" onClick={handleLogout}>
                         Logout
+                    </button>
+                    <button className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600" onClick={connectToMetaMask}>
+                        {metaMask.isConnected ? "Wallet connected" : "Connect wallet"}
                     </button>
                 </div>
             </div>

@@ -4763,6 +4763,11 @@
   "resolved" "https://registry.npmjs.org/merge2/-/merge2-1.4.1.tgz"
   "version" "1.4.1"
 
+"metamask-react@^2.4.1":
+  "integrity" "sha512-0eACYVsqqBkrDMkUbVr43ExvZTPNVibnC8l6HNzO8yrewWE2WJW50oTJX1b1i3KqvkLWU693BTVTeMinCvJc4g=="
+  "resolved" "https://registry.npmjs.org/metamask-react/-/metamask-react-2.4.1.tgz"
+  "version" "2.4.1"
+
 "micromatch@^4.0.4", "micromatch@^4.0.5":
   "integrity" "sha512-DMy+ERcEW2q8Z2Po+WNXuw3c5YaUSFjAO5GsJqfEl7UjvtIuFKO6ZrKvcItdy98dwFI2N1tg3zNIdKaQT+aNdA=="
   "resolved" "https://registry.npmjs.org/micromatch/-/micromatch-4.0.5.tgz"
