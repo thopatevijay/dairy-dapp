@@ -4,7 +4,7 @@ require('dotenv').config();
 /** @type import('hardhat/config').HardhatUserConfig */
 
 module.exports = {
-  defaultNetwork: 'goerli',
+  defaultNetwork: 'ganache',
   networks: {
     ganache: {
       url: 'http://localhost:8545'
