@@ -1,10 +1,11 @@
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
-import { UserContext } from '../common/Provider/UserProvider';
+import { useUserContext } from '../common/Provider';
 import AccessDenied from "../common/AccessDenied";
 
 const Distributor = () => {
-    const { user } = useContext(UserContext);
+    const { user } = useUserContext();
+
     const router = useRouter();
 
     if (user && user.role !== "distributor") {

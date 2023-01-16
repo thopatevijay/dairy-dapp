@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect } from 'react';
+import React, { useState, createContext, useEffect, useContext } from 'react';
 import { useRouter } from 'next/router';
 
 export const UserContext = createContext();
@@ -13,8 +13,9 @@ export const UserProvider = ({ children }) => {
     }, [setUser, router]);
 
     const login = (userData) => {
-        localStorage.setItem('dairy-login', JSON.stringify(userData));
-        setUser(userData);
+        const {email, role} = userData;
+        localStorage.setItem('dairy-login', JSON.stringify({email: email, role: role}));
+        setUser({email, role});
     };
 
     const logout = () => {
@@ -28,4 +29,8 @@ export const UserProvider = ({ children }) => {
             {children}
         </UserContext.Provider>
     );
+};
+
+export const useUserContext = () => {
+    return useContext(UserContext);
 };

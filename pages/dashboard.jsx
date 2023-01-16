@@ -1,10 +1,7 @@
-import { useState, useEffect, useContext } from 'react';
+import { useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { UserContext } from '../common/Provider/UserProvider';
 
 const Dashboard = () => {
-    const { user } = useContext(UserContext);
-    const handleLogout = useContext(UserContext).logout;
     const router = useRouter();
 
     useEffect(() => {

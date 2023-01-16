@@ -1,13 +1,13 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { UserContext } from './Provider/UserProvider';
-import { useWalletContext } from './Provider/WalletProvider';
+import React, { useState, useEffect } from 'react';
+import { useWalletContext, useUserContext } from './Provider';
 import { useRouter } from 'next/router';
 
 const Navbar = () => {
-    const { user } = useContext(UserContext);
-    const [displayedUser, setDisplayedUser] = useState(user);
     const { metaMask, connectToMetaMask } = useWalletContext();
-    const handleLogout = useContext(UserContext).logout;
+    const { user, logout} = useUserContext();
+    const [displayedUser, setDisplayedUser] = useState(user);
+    const handleLogout = logout;
+
     const router = useRouter();
     const { pathname } = router;
 
