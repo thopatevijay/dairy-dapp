@@ -9,3 +9,14 @@ export async function getFarmer(req, res) {
         res.status(404).json({ error: "Error ..." });
     }
 }
+
+export async function addFarmer(req, res) {
+    try {
+        const data = req.body;
+
+        let txn = await contractInstance.addFarmer(data.name);
+        res.status(200).json(txn);
+    } catch (error) {
+        res.status(404).json({ error: "Error ..." });
+    }
+}
