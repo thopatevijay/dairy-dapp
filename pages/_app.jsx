@@ -1,6 +1,6 @@
 import '../styles/globals.css'
 import { UserProvider, WalletProvider } from '../common/Provider'
-import Navbar from '../common/Navbar'
+import Navbar from './components/Navbar'
 import { MetaMaskProvider } from "metamask-react";
 
 function MyApp({ Component, pageProps }) {
