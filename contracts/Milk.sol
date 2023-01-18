@@ -3,7 +3,7 @@
 pragma solidity 0.8.17;
 
 // This is the basic implementation for milkCollection.
-contract MilkCollection {
+contract Milk {
 
     struct Farmer {
         uint id;

@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-
+import { useUserContext } from '../common/Provider';
 const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
+  const { login} = useUserContext();
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,8 +19,7 @@ const LoginPage = () => {
       });
       if (response.ok) {
         const data = await response.json();
-        const {email, role} = data.users;
-        localStorage.setItem('dairy-login', JSON.stringify({email: email, role: role}));
+        login(data.users);
         router.push('/dashboard');
       } else {
         const data = await response.json();
