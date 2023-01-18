@@ -3,6 +3,7 @@ import { useUserContext } from '../common/Provider';
 import AccessDenied from "./components/AccessDenied";
 import { BiUserPlus } from "react-icons/bi";
 import MilkCollectTable from './components/MilkCollectTable';
+import MilkCollectForm from './components/MilkCollectForm';
 
 const MilkCollector = () => {
     const { user } = useUserContext();
@@ -25,6 +26,9 @@ const MilkCollector = () => {
                         Collect Milk <span className='px-1'><BiUserPlus size={23}></BiUserPlus></span>
                     </button>
                 </div>
+            </div>
+            <div className="container mx-auto py-5">
+                <MilkCollectForm />
             </div>
             <div className="container mx-auto">
                 <MilkCollectTable />
