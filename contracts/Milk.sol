@@ -2,41 +2,63 @@
 
 pragma solidity 0.8.17;
 
-// This is the basic implementation for milkCollection.
 contract Milk {
-
+    // Struct to represent a Farmer
     struct Farmer {
-        uint id;
+        uint256 farmerId;
         string name;
-        uint milkAmount;
-        uint milkQuality;
+        uint256 milkQuantity;
+        uint256 milkQuality;
+        uint256 milkCollectorId;
     }
 
-    mapping(uint => Farmer) public farmers;
+    // Struct to represent a MilkCollection
+    struct MilkCollection {
+        uint256 milkCollectorId;
+        uint256 farmerId;
+        uint256 quantity;
+        uint256 quality;
+        uint256 timestamp;
+    }
 
-    event FarmerAdded(uint id, string name);
-    event MilkCollected(uint id, uint amount, uint quality);
+    // Mapping to store the farmers
+    mapping(uint256 => Farmer) public farmers;
+    // Mapping to store the milk collections
+    mapping(uint256 => MilkCollection) public milkCollections;
 
-    uint public farmerIdCounter = 1;
+    // Counter for assigning unique IDs to farmers
+    uint256 public farmerIdCounter = 1;
 
-    function addFarmer(string memory name) public {
-        uint id = farmerIdCounter;
+    // Counter for assigning unique IDs to milk collections
+    uint256 public milkCollectionCounter = 1;
+
+    // Function to add a farmer to the contract
+    function addFarmer(uint256 milkCollectorId, string memory name) public {
+        uint256 farmerId = farmerIdCounter;
         farmerIdCounter++;
-        farmers[id] = Farmer(id, name, 0, 0);
-        emit FarmerAdded(id, name);
+        // Create a farmer struct and add it to the farmers mapping
+        farmers[farmerId] = Farmer(farmerId, name, 0, 0, milkCollectorId);
     }
 
-    function collectMilk(uint id, uint amount, uint quality) public {
-        Farmer storage farmer = farmers[id];
-        require(quality < 8, "Milk quality does not meet");
-        farmer.milkAmount = amount;
+    // Function to collect milk from a farmer
+    function collectMilk(
+        uint256 milkCollectorId,
+        uint256 farmerId,
+        uint256 quantity,
+        uint256 quality
+    ) public {
+        Farmer storage farmer = farmers[farmerId];
+        // Add the collected milk to the farmer's total
+        farmer.milkQuantity = quantity;
         farmer.milkQuality = quality;
-        emit MilkCollected(id, amount, quality);
-    }
-
-    function getFarmer(uint id) public view returns (uint, string memory, uint) {
-        
-        Farmer storage farmer = farmers[id];
-        return (farmer.id, farmer.name, farmer.milkAmount);
+        // Add the milk collection to the milkCollections mapping
+        milkCollections[milkCollectionCounter] = MilkCollection(
+            milkCollectorId,
+            farmerId,
+            quantity,
+            quality,
+            block.timestamp
+        );
+        milkCollectionCounter++;
     }
 }
