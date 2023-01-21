@@ -14,7 +14,7 @@ export async function addFarmer(req, res) {
     try {
         const data = req.body;
 
-        let txn = await contractInstance.addFarmer(data.name);
+        let txn = await contractInstance.addFarmer(data.milkCollectorId ,data.name);
         res.status(200).json(txn);
     } catch (error) {
         res.status(404).json({ error: "Error ..." });

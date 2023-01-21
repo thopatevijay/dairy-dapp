@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useUserContext } from '../../common/Provider';
 
 const MilkCollectForm = () => {
-    const [id, setId] = useState('');
-    const [milkAmount, setMilkAmount] = useState('');
+    const [farmerId, setFarmerId] = useState('');
+    const [milkQuantity, setMilkQuantity] = useState('');
     const [milkQuality, setMilkQuality] = useState('');
     const [error, setError] = useState('');
+    const { user } = useUserContext();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -12,7 +14,7 @@ const MilkCollectForm = () => {
             const response = await fetch('http://localhost:3000/api/milk-collector', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, milkAmount, milkQuality }),
+                body: JSON.stringify({ milkCollectorId: user.id, farmerId, milkQuantity, milkQuality }),
             });
             if (response.ok) {
                 const data = await response.json();
@@ -32,10 +34,10 @@ const MilkCollectForm = () => {
             {error && <p className="text-red-500">{error}</p>}
 
             <div className="input-type">
-                <input type="text" value={id} onChange={(e) => setId(e.target.value)} name="farmerID" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Farmer ID" />
+                <input type="text" value={farmerId} onChange={(e) => setFarmerId(e.target.value)} name="farmerID" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Farmer ID" />
             </div>
             <div className="input-type">
-                <input type="text" value={milkAmount} onChange={(e) => setMilkAmount(e.target.value)} name="milkAmount" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Milk Amount" />
+                <input type="text" value={milkQuantity} onChange={(e) => setMilkQuantity(e.target.value)} name="milkQuantity" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Milk Quantity" />
             </div>
             <div className="input-type">
                 <input type="text" value={milkQuality} onChange={(e) => setMilkQuality(e.target.value)} name="milkQuality" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Milk Quality" />
