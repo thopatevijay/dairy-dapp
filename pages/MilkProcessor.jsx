@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
 import { useUserContext } from '../common/Provider';
-import AccessDenied from "../common/AccessDenied";
+import AccessDenied from "./components/AccessDenied";
 
 const MilkProcessor = () => {
     const { user } = useUserContext();
