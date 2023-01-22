@@ -1,16 +1,71 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useUserContext } from '../common/Provider';
 import AccessDenied from "./components/AccessDenied";
-import { BiUserPlus } from "react-icons/bi";
-import MilkCollectTable from './components/MilkCollectTable';
-import MilkCollectForm from './components/MilkCollectForm';
+import { getCollctedMilk, getFarmers } from '../common/Provider/lib/helper';
+import AddMilkCollection from './components/AddMilkCollection';
+import AddFarmer from './components/AddFarmer';
+import moment from 'moment';
 
 const MilkCollector = () => {
-    const [formVisible, setFormVisible] = useState(false)
+    const [milkCollections, setMilkCollections] = useState([]);
+    const [farmers, setFarmers] = useState([]);
+    const [activeTab, setActiveTab] = useState("milk-collection");
+    const [error, setError] = useState('');
     const { user } = useUserContext();
-
     const router = useRouter();
+
+    const convertTimestamp = (timestamp) => {
+        return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
+    };
+
+    const getMillColletionList = useCallback(async () => {
+        if (user) {
+            try {
+                const milkCollections = await getCollctedMilk();
+                const farmers = await getFarmers();
+
+                const milkCollectionsWithFarmerName = milkCollections.map((milkCollection) => {
+                    const farmer = farmers.find((farmer) => farmer.farmerId === milkCollection.farmerId);
+                    const newTime = convertTimestamp(milkCollection.timestamp);
+
+                    return { ...milkCollection, farmerName: farmer.name, timestamp: newTime }
+                })
+
+                const filterMilkCollectionByCollectorID = milkCollectionsWithFarmerName.filter((collection) =>
+                    collection.milkCollectorId === user.id
+                )
+                setMilkCollections(filterMilkCollectionByCollectorID);
+            } catch (e) {
+                console.log(e);
+                setError('An error occurred. Please try again later.');
+            }
+        }
+    }, [setMilkCollections, user]);
+
+    const getFarmersList = useCallback(async () => {
+        if (user) {
+            try {
+                const farmers = await getFarmers();
+                const filterFarmersByMilkCollectorID = farmers.filter((farmer) =>
+                    farmer.milkCollectorId === user.id
+                )
+                setFarmers(filterFarmersByMilkCollectorID);
+            } catch (e) {
+                console.log(e);
+                setError('An error occurred. Please try again later.');
+            }
+        }
+    }, [user]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            getMillColletionList();
+            getFarmersList();
+        }, 1000);
+        return () => clearInterval(interval);
+    }, [getFarmersList, getMillColletionList]);
+
 
     if (user && user.role !== "milkcollector") {
         setTimeout(() => {
@@ -19,33 +74,30 @@ const MilkCollector = () => {
         return <AccessDenied requiredRole="Milk Collector" />
     }
 
-    const handleToggleForm = () => {
-        setFormVisible(!formVisible);
-    }
-
     return (
         <main className='py-5'>
-            <h1 className='text-xl md:text-2xl text-center font-bold'>Milk Collection</h1>
-            <div className="container mx-auto flex justify-between py-5 border-b">
-                <div className="left flex gap-3" onClick={handleToggleForm}>
-                    <button className="flex bg-indigo-500 text-white px-4 py-2 border rounded-md hover:bg-grary-50 hover:border-indigo-500 hover:text-gray-800">
-                        Collect Milk <span className='px-1'><BiUserPlus size={23}></BiUserPlus></span>
-                    </button>
+            <div className="tabs ml-6">
+                <button
+                    className={`tab-item py-2 px-4 rounded-l-md ${activeTab === "milk-collection" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
+                    onClick={() => setActiveTab("milk-collection")}
+                >
+                    Milk Collection
+                </button>
+                <button
+                    className={`tab-item py-2 px-4 rounded-r-md ${activeTab === "add-farmer" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
+                    onClick={() => setActiveTab("add-farmer")}
+                >
+                    Add Farmer
+                </button>
+            </div>
+            {activeTab === "milk-collection" ?
+                <div className="milk-collection-content">
+                    <AddMilkCollection milkCollections={milkCollections} error={error} farmers={farmers}/>
+                </div> :
+                <div className="add-farmer-content">
+                    <AddFarmer farmers={farmers} error={error} />
                 </div>
-            </div>
-            {
-                formVisible
-                    ?
-                    (
-                        <div className="container mx-auto py-5">
-                            <MilkCollectForm />
-                        </div>
-                    )
-                    : null
             }
-            <div className="container mx-auto">
-                <MilkCollectTable />
-            </div>
         </main>
     );
 };

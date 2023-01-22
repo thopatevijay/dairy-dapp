@@ -1,22 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
+import { useUserContext } from '../../common/Provider';
+import { submitMilkData } from '../../common/Provider/lib/helper';
 
-const MilkCollectForm = () => {
-    const [id, setId] = useState('');
-    const [milkAmount, setMilkAmount] = useState('');
+const MilkCollectForm = ({ farmers }) => {
+    const [farmerId, setFarmerId] = useState('');
+    const [milkQuantity, setMilkQuantity] = useState('');
     const [milkQuality, setMilkQuality] = useState('');
     const [error, setError] = useState('');
+    const { user } = useUserContext();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/api/milk-collector', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ id, milkAmount, milkQuality }),
-            });
+            const response = await submitMilkData({ milkCollectorId: user.id, farmerId, milkQuantity, milkQuality });
             if (response.ok) {
-                const data = await response.json();
-                console.log(data);
+                console.log('milk data submittted');
             } else {
                 const data = await response.json();
                 setError(data.error);
@@ -25,17 +23,22 @@ const MilkCollectForm = () => {
             console.error(err);
             setError('An error occurred. Please try again later.');
         }
-    };
+    }, [farmerId, milkQuality, milkQuantity, user.id]);
 
     return (
         <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>
             {error && <p className="text-red-500">{error}</p>}
 
             <div className="input-type">
-                <input type="text" value={id} onChange={(e) => setId(e.target.value)} name="farmerID" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Farmer ID" />
+                <select value={farmerId} onChange={(e) => setFarmerId(e.target.value)} name="farmerID" className="border w-full px-5 py-3 focus:outline-none rounded-md">
+                    <option value="">Select Farmer</option>
+                    {farmers.map((farmer) => (
+                        <option key={farmer.farmerId} value={farmer.farmerId}>{farmer.name}</option>
+                    ))}
+                </select>
             </div>
             <div className="input-type">
-                <input type="text" value={milkAmount} onChange={(e) => setMilkAmount(e.target.value)} name="milkAmount" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Milk Amount" />
+                <input type="text" value={milkQuantity} onChange={(e) => setMilkQuantity(e.target.value)} name="milkQuantity" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Milk Quantity" />
             </div>
             <div className="input-type">
                 <input type="text" value={milkQuality} onChange={(e) => setMilkQuality(e.target.value)} name="milkQuality" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Milk Quality" />

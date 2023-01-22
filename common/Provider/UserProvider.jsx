@@ -13,9 +13,9 @@ export const UserProvider = ({ children }) => {
     }, [setUser, router]);
 
     const login = (userData) => {
-        const {email, role} = userData;
-        localStorage.setItem('dairy-login', JSON.stringify({email: email, role: role}));
-        setUser({email, role});
+        const { email, role, id } = userData;
+        localStorage.setItem('dairy-login', JSON.stringify({ email: email, role: role, id: id }));
+        setUser({ email, role, id });
     };
 
     const logout = () => {
