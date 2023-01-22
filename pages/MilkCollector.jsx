@@ -5,6 +5,7 @@ import AccessDenied from "./components/AccessDenied";
 import { getCollctedMilk, getFarmers } from '../common/Provider/lib/helper';
 import AddMilkCollection from './components/AddMilkCollection';
 import AddFarmer from './components/AddFarmer';
+import moment from 'moment';
 
 const MilkCollector = () => {
     const [milkCollections, setMilkCollections] = useState([]);
@@ -14,6 +15,10 @@ const MilkCollector = () => {
     const { user } = useUserContext();
     const router = useRouter();
 
+    const convertTimestamp = (timestamp) => {
+        return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
+    };
+
     const getMillColletionList = useCallback(async () => {
         if (user) {
             try {
@@ -22,8 +27,9 @@ const MilkCollector = () => {
 
                 const milkCollectionsWithFarmerName = milkCollections.map((milkCollection) => {
                     const farmer = farmers.find((farmer) => farmer.farmerId === milkCollection.farmerId);
+                    const newTime = convertTimestamp(milkCollection.timestamp);
 
-                    return { ...milkCollection, farmerName: farmer.name, }
+                    return { ...milkCollection, farmerName: farmer.name, timestamp: newTime }
                 })
 
                 const filterMilkCollectionByCollectorID = milkCollectionsWithFarmerName.filter((collection) =>
@@ -89,7 +95,7 @@ const MilkCollector = () => {
                     <AddMilkCollection milkCollections={milkCollections} error={error} />
                 </div> :
                 <div className="add-farmer-content">
-                    <AddFarmer farmers={farmers} error={error}/>
+                    <AddFarmer farmers={farmers} error={error} />
                 </div>
             }
         </main>
