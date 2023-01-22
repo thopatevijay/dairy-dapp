@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useUserContext } from '../../common/Provider';
+import { submitMilkData } from '../../common/Provider/lib/helper';
 
 const MilkCollectForm = () => {
     const [farmerId, setFarmerId] = useState('');
@@ -8,17 +9,12 @@ const MilkCollectForm = () => {
     const [error, setError] = useState('');
     const { user } = useUserContext();
 
-    const handleSubmit = async (e) => {
+    const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         try {
-            const response = await fetch('http://localhost:3000/api/milk-collector', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ milkCollectorId: user.id, farmerId, milkQuantity, milkQuality }),
-            });
+            const response = await submitMilkData({ milkCollectorId: user.id, farmerId, milkQuantity, milkQuality });
             if (response.ok) {
-                const data = await response.json();
-                console.log(data);
+                console.log('milk data submittted');
             } else {
                 const data = await response.json();
                 setError(data.error);
@@ -27,7 +23,7 @@ const MilkCollectForm = () => {
             console.error(err);
             setError('An error occurred. Please try again later.');
         }
-    };
+    },[farmerId, milkQuality, milkQuantity, user.id]);
 
     return (
         <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useRouter } from 'next/router';
 import { useUserContext } from '../common/Provider';
 import AccessDenied from "./components/AccessDenied";
 import { BiUserPlus } from "react-icons/bi";
 import MilkCollectTable from './components/MilkCollectTable';
 import MilkCollectForm from './components/MilkCollectForm';
+import { getCollctedMilk, submitMilkData, getFarmers } from '../common/Provider/lib/helper';
 
 const MilkCollector = () => {
     const [formVisible, setFormVisible] = useState(false)
@@ -17,25 +18,21 @@ const MilkCollector = () => {
         setFormVisible(!formVisible);
     }
 
-    const fetchData = async () => {
+    const getHistoryTableRows = useCallback(async () => {
         try {
-            const response = await fetch('http://localhost:3000/api/milk-collector');
-            if (response.ok) {
-                const data = await response.json();
-                setMilkCollections(data);
-            } else {
-                const data = await response.json();
-                setError(data.error);
-            }
-        } catch (err) {
-            console.error(err);
+            const milkCollections = await getCollctedMilk();
+            const farmers = await getFarmers();
+            console.log(farmers)
+            setMilkCollections(milkCollections);
+        } catch (e) {
+            console.log(e);
             setError('An error occurred. Please try again later.');
         }
-    };
+    }, [getCollctedMilk, getFarmers, setMilkCollections]);
 
     useEffect(() => {
-        fetchData();
-    }, []);
+        getHistoryTableRows();
+    }, [getHistoryTableRows]);
 
     if (user && user.role !== "milkcollector") {
         setTimeout(() => {
