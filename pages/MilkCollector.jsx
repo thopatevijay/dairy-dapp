@@ -18,12 +18,17 @@ const MilkCollector = () => {
         setFormVisible(!formVisible);
     }
 
-    const getHistoryTableRows = useCallback(async () => {
+    const getMillColletionList = useCallback(async () => {
         try {
             const milkCollections = await getCollctedMilk();
             const farmers = await getFarmers();
-            console.log(farmers)
-            setMilkCollections(milkCollections);
+
+            const milkCollectionsWithFarmerName = milkCollections.map((milkCollection) => {
+                const farmer = farmers.find((farmer) => farmer.farmerId === milkCollection.farmerId);
+
+                return { ...milkCollection, farmerName: farmer.name, }
+            })
+            setMilkCollections(milkCollectionsWithFarmerName);
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again later.');
@@ -31,8 +36,12 @@ const MilkCollector = () => {
     }, [getCollctedMilk, getFarmers, setMilkCollections]);
 
     useEffect(() => {
-        getHistoryTableRows();
-    }, [getHistoryTableRows]);
+        const interval = setInterval(() => {
+          getMillColletionList();
+        }, 1000);
+        return () => clearInterval(interval);
+      }, [getMillColletionList]);
+    
 
     if (user && user.role !== "milkcollector") {
         setTimeout(() => {

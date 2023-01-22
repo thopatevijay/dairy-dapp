@@ -1,5 +1,4 @@
 const MilkCollectTable = ({ milkCollections, getMilkDataError }) => {
-    console.log(milkCollections)
     return (
         <table className="min-w-full table-auto">
             <thead>
@@ -24,12 +23,12 @@ const MilkCollectTable = ({ milkCollections, getMilkDataError }) => {
             <tbody className="bg-gray-200">
                 {milkCollections && milkCollections.map((milkCollectionRow, index) => {
                     return (
-                        <tr key={index} className="bg-gray-50 text-center">
+                        <tr key={index} className="bg-gray-10 text-center">
                             <td className="px-16 py-2">
                                 <span>{milkCollectionRow.farmerId}</span>
                             </td>
                             <td className="px-16 py-2">
-                                <span>name</span>
+                                <span>{milkCollectionRow.farmerName}</span>
                             </td>
                             <td className="px-16 py-2">
                                 <span>{milkCollectionRow.quality}</span>
