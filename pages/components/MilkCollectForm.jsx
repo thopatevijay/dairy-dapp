@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { useUserContext } from '../../common/Provider';
 import { submitMilkData } from '../../common/Provider/lib/helper';
 
-const MilkCollectForm = () => {
+const MilkCollectForm = ({ farmers }) => {
     const [farmerId, setFarmerId] = useState('');
     const [milkQuantity, setMilkQuantity] = useState('');
     const [milkQuality, setMilkQuality] = useState('');
@@ -23,14 +23,19 @@ const MilkCollectForm = () => {
             console.error(err);
             setError('An error occurred. Please try again later.');
         }
-    },[farmerId, milkQuality, milkQuantity, user.id]);
+    }, [farmerId, milkQuality, milkQuantity, user.id]);
 
     return (
         <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>
             {error && <p className="text-red-500">{error}</p>}
 
             <div className="input-type">
-                <input type="text" value={farmerId} onChange={(e) => setFarmerId(e.target.value)} name="farmerID" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Farmer ID" />
+                <select value={farmerId} onChange={(e) => setFarmerId(e.target.value)} name="farmerID" className="border w-full px-5 py-3 focus:outline-none rounded-md">
+                    <option value="">Select Farmer</option>
+                    {farmers.map((farmer) => (
+                        <option key={farmer.farmerId} value={farmer.farmerId}>{farmer.name}</option>
+                    ))}
+                </select>
             </div>
             <div className="input-type">
                 <input type="text" value={milkQuantity} onChange={(e) => setMilkQuantity(e.target.value)} name="milkQuantity" className="border w-full px-5 py-3 focus:outline-none rounded-md" placeholder="Milk Quantity" />

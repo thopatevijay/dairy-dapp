@@ -3,7 +3,7 @@ import { BiUserPlus } from "react-icons/bi";
 import MilkCollectForm from './MilkCollectForm';
 import MilkCollectTable from './MilkCollectTable';
 
-const AddMilkCollection = ({ milkCollections, getMilkDataError }) => {
+const AddMilkCollection = ({ milkCollections, getMilkDataError, farmers }) => {
     const [formVisible, setFormVisible] = useState(false)
 
     const handleToggleForm = () => {
@@ -24,7 +24,7 @@ const AddMilkCollection = ({ milkCollections, getMilkDataError }) => {
                     ?
                     (
                         <div className="container mx-auto py-5">
-                            <MilkCollectForm />
+                            <MilkCollectForm farmers={farmers}/>
                         </div>
                     )
                     : null

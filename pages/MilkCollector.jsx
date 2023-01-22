@@ -92,7 +92,7 @@ const MilkCollector = () => {
             </div>
             {activeTab === "milk-collection" ?
                 <div className="milk-collection-content">
-                    <AddMilkCollection milkCollections={milkCollections} error={error} />
+                    <AddMilkCollection milkCollections={milkCollections} error={error} farmers={farmers}/>
                 </div> :
                 <div className="add-farmer-content">
                     <AddFarmer farmers={farmers} error={error} />
