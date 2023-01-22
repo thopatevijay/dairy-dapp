@@ -19,29 +19,35 @@ const MilkCollector = () => {
     }
 
     const getMillColletionList = useCallback(async () => {
-        try {
-            const milkCollections = await getCollctedMilk();
-            const farmers = await getFarmers();
+        if (user) {
+            try {
+                const milkCollections = await getCollctedMilk();
+                const farmers = await getFarmers();
 
-            const milkCollectionsWithFarmerName = milkCollections.map((milkCollection) => {
-                const farmer = farmers.find((farmer) => farmer.farmerId === milkCollection.farmerId);
+                const milkCollectionsWithFarmerName = milkCollections.map((milkCollection) => {
+                    const farmer = farmers.find((farmer) => farmer.farmerId === milkCollection.farmerId);
 
-                return { ...milkCollection, farmerName: farmer.name, }
-            })
-            setMilkCollections(milkCollectionsWithFarmerName);
-        } catch (e) {
-            console.log(e);
-            setError('An error occurred. Please try again later.');
+                    return { ...milkCollection, farmerName: farmer.name, }
+                })
+
+                const filterMilkCollectionByCollectorID = milkCollectionsWithFarmerName.filter((collection) =>
+                    collection.milkCollectorId === user.id
+                )
+                setMilkCollections(filterMilkCollectionByCollectorID);
+            } catch (e) {
+                console.log(e);
+                setError('An error occurred. Please try again later.');
+            }
         }
-    }, [getCollctedMilk, getFarmers, setMilkCollections]);
+    }, [getCollctedMilk, getFarmers, setMilkCollections, user]);
 
     useEffect(() => {
         const interval = setInterval(() => {
-          getMillColletionList();
+            getMillColletionList();
         }, 1000);
         return () => clearInterval(interval);
-      }, [getMillColletionList]);
-    
+    }, [getMillColletionList]);
+
 
     if (user && user.role !== "milkcollector") {
         setTimeout(() => {
