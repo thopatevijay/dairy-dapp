@@ -3,7 +3,7 @@ import { BiUserPlus } from "react-icons/bi";
 import AddFarmerForm from './AddFarmerForm';
 import FarmerTable from './FarmerTable';
 
-const AddFarmer = () => {
+const AddFarmer = ({farmers, error}) => {
     const [formVisible, setFormVisible] = useState(false)
 
     const handleToggleForm = () => {
@@ -30,7 +30,7 @@ const AddFarmer = () => {
                     : null
             }
             <div className="container mx-auto">
-                <FarmerTable />
+                <FarmerTable farmers={farmers} error={error={}}/>
             </div>
         </div>
     )

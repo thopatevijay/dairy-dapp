@@ -19,3 +19,12 @@ export const submitMilkData = async ({ milkCollectorId, farmerId, milkQuantity, 
     });
     return response
 }
+
+export const addNewFarmer = async ({ milkCollectorId, farmerName }) => {
+    const response = await fetch('http://localhost:3000/api/farmer', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ milkCollectorId, farmerName }),
+    });
+    return response
+}

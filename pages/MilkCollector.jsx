@@ -8,6 +8,7 @@ import AddFarmer from './components/AddFarmer';
 
 const MilkCollector = () => {
     const [milkCollections, setMilkCollections] = useState([]);
+    const [farmers, setFarmers] = useState([]);
     const [activeTab, setActiveTab] = useState("milk-collection");
     const [error, setError] = useState('');
     const { user } = useUserContext();
@@ -36,12 +37,28 @@ const MilkCollector = () => {
         }
     }, [setMilkCollections, user]);
 
+    const getFarmersList = useCallback(async () => {
+        if (user) {
+            try {
+                const farmers = await getFarmers();
+                const filterFarmersByMilkCollectorID = farmers.filter((farmer) =>
+                    farmer.milkCollectorId === user.id
+                )
+                setFarmers(filterFarmersByMilkCollectorID);
+            } catch (e) {
+                console.log(e);
+                setError('An error occurred. Please try again later.');
+            }
+        }
+    }, [user]);
+
     useEffect(() => {
         const interval = setInterval(() => {
             getMillColletionList();
+            getFarmersList();
         }, 1000);
         return () => clearInterval(interval);
-    }, [getMillColletionList]);
+    }, [getFarmersList, getMillColletionList]);
 
 
     if (user && user.role !== "milkcollector") {
@@ -72,7 +89,7 @@ const MilkCollector = () => {
                     <AddMilkCollection milkCollections={milkCollections} error={error} />
                 </div> :
                 <div className="add-farmer-content">
-                    <AddFarmer />
+                    <AddFarmer farmers={farmers} error={error}/>
                 </div>
             }
         </main>

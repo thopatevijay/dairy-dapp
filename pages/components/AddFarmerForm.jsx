@@ -1,6 +1,6 @@
 import React, { useState, useCallback } from 'react';
 import { useUserContext } from '../../common/Provider';
-import { submitMilkData } from '../../common/Provider/lib/helper';
+import { addNewFarmer } from '../../common/Provider/lib/helper';
 
 const AddFarmerForm = () => {
     const [farmerName, setFarmerName] = useState('');
@@ -10,7 +10,7 @@ const AddFarmerForm = () => {
     const handleSubmit = useCallback(async (e) => {
         e.preventDefault();
         try {
-            const response = await submitMilkData({ milkCollectorId: user.id, farmerName});
+            const response = await addNewFarmer({ milkCollectorId: user.id, farmerName});
             if (response.ok) {
                 console.log('Farmer Added');
             } else {
