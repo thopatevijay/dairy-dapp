@@ -6,6 +6,7 @@ import { getCollctedMilk, getFarmers } from '../common/Provider/lib/helper';
 import AddMilkCollection from './components/AddMilkCollection';
 import AddFarmer from './components/AddFarmer';
 import moment from 'moment';
+import { getAllBatches, getBatchCollectionIds } from '../database/milk-collector.controller';
 
 const MilkCollector = () => {
     const [milkCollections, setMilkCollections] = useState([]);
@@ -18,6 +19,25 @@ const MilkCollector = () => {
     const convertTimestamp = (timestamp) => {
         return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
     };
+
+    const getAllBatchesList = useCallback(async () => {
+        if (user) {
+            try {
+                const batches = await getAllBatches();
+
+                const batchPromises = batches.map(async (batch) => {
+                    const collectionIds = await getBatchCollectionIds(batch.batchId);
+
+                    return { ...batch, collectionIds: collectionIds };
+                });
+                const batchesWithCollectionIds = await Promise.all(batchPromises);
+                return batchesWithCollectionIds;
+            } catch (e) {
+                console.log(e);
+                setError('An error occurred. Please try again later.');
+            }
+        }
+    }, [user]);
 
     const getMillColletionList = useCallback(async () => {
         if (user) {
@@ -35,13 +55,23 @@ const MilkCollector = () => {
                 const filterMilkCollectionByCollectorID = milkCollectionsWithFarmerName.filter((collection) =>
                     collection.milkCollectorId === user.id
                 )
-                setMilkCollections(filterMilkCollectionByCollectorID);
+
+                const batchesWithCollectionIds = await getAllBatchesList();
+
+                const allCollectionIds = batchesWithCollectionIds.map((batch) => batch.collectionIds).flat();
+                const uniqueCollectionIds = [...new Set(allCollectionIds)];
+
+                const filteredMilkCollectionsExcludingBatches = filterMilkCollectionByCollectorID.filter(
+                    (collection) => !uniqueCollectionIds.includes(collection.collectionId)
+                );
+
+                setMilkCollections(filteredMilkCollectionsExcludingBatches);
             } catch (e) {
                 console.log(e);
                 setError('An error occurred. Please try again later.');
             }
         }
-    }, [setMilkCollections, user]);
+    }, [getAllBatchesList, user]);
 
     const getFarmersList = useCallback(async () => {
         if (user) {
@@ -92,7 +122,7 @@ const MilkCollector = () => {
             </div>
             {activeTab === "milk-collection" ?
                 <div className="milk-collection-content">
-                    <AddMilkCollection milkCollections={milkCollections} error={error} farmers={farmers}/>
+                    <AddMilkCollection milkCollections={milkCollections} error={error} farmers={farmers} />
                 </div> :
                 <div className="add-farmer-content">
                     <AddFarmer farmers={farmers} error={error} />
