@@ -33,6 +33,8 @@ const MilkCollector = () => {
                     return { ...batch, collectionIds: collectionIds };
                 });
                 const batchesWithCollectionIds = await Promise.all(batchPromises);
+
+
                 return batchesWithCollectionIds;
             } catch (e) {
                 console.log(e);
@@ -73,7 +75,12 @@ const MilkCollector = () => {
 
                     return { ...batch, batchCreatedTime, statusUpdateTime }
                 })
-                setExistingBatches(timestampConvertedBatces);
+
+                const filterBatchesByCollectorId = timestampConvertedBatces.filter((batch) =>
+                    batch.collectorId === user.id
+                );
+
+                setExistingBatches(filterBatchesByCollectorId);
                 setMilkCollections(filteredMilkCollectionsExcludingBatches);
             } catch (e) {
                 console.log(e);
@@ -117,19 +124,19 @@ const MilkCollector = () => {
         <main className='py-5'>
             <div className="tabs ml-6">
                 <button
-                    className={`tab-item py-2 px-4 rounded-l-md ${activeTab === "milk-collection" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
+                    className={`tab-item py-2 px-4 rounded-md ${activeTab === "milk-collection" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
                     onClick={() => setActiveTab("milk-collection")}
                 >
                     Milk Collection
                 </button>
                 <button
-                    className={`tab-item py-2 px-4 rounded-r-md ${activeTab === "add-farmer" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
+                    className={`tab-item py-2 px-4 rounded-md ${activeTab === "add-farmer" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
                     onClick={() => setActiveTab("add-farmer")}
                 >
                     Add Farmer
                 </button>
                 <button
-                    className={`tab-item py-2 px-4 rounded-r-md ${activeTab === "baches" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
+                    className={`tab-item py-2 px-4 rounded-md ${activeTab === "baches" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
                     onClick={() => setActiveTab("baches")}
                 >
                     Batches
