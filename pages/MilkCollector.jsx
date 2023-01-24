@@ -7,9 +7,11 @@ import AddMilkCollection from './components/AddMilkCollection';
 import AddFarmer from './components/AddFarmer';
 import moment from 'moment';
 import { getAllBatches, getBatchCollectionIds } from '../database/milk-collector.controller';
+import MilkCollectorBatches from './components/MilkCollectorBatches';
 
 const MilkCollector = () => {
     const [milkCollections, setMilkCollections] = useState([]);
+    const [existingBatches, setExistingBatches] = useState([]);
     const [farmers, setFarmers] = useState([]);
     const [activeTab, setActiveTab] = useState("milk-collection");
     const [error, setError] = useState('');
@@ -65,13 +67,20 @@ const MilkCollector = () => {
                     (collection) => !uniqueCollectionIds.includes(collection.collectionId)
                 );
 
+                const timestampConvertedBatces = batchesWithCollectionIds.map((batch) => {
+                    const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
+                    const statusUpdateTime = convertTimestamp(batch.statusUpdateTime);
+
+                    return { ...batch, batchCreatedTime, statusUpdateTime }
+                })
+                setExistingBatches(timestampConvertedBatces);
                 setMilkCollections(filteredMilkCollectionsExcludingBatches);
             } catch (e) {
                 console.log(e);
                 setError('An error occurred. Please try again later.');
             }
         }
-    }, [getAllBatchesList, user]);
+    }, [getAllBatchesList, user, setExistingBatches]);
 
     const getFarmersList = useCallback(async () => {
         if (user) {
@@ -119,14 +128,27 @@ const MilkCollector = () => {
                 >
                     Add Farmer
                 </button>
+                <button
+                    className={`tab-item py-2 px-4 rounded-r-md ${activeTab === "baches" ? "bg-indigo-500 text-white" : "bg-white text-indigo-500"}`}
+                    onClick={() => setActiveTab("baches")}
+                >
+                    Batches
+                </button>
             </div>
-            {activeTab === "milk-collection" ?
+            {activeTab === "milk-collection"
+                ?
                 <div className="milk-collection-content">
                     <AddMilkCollection milkCollections={milkCollections} error={error} farmers={farmers} />
-                </div> :
-                <div className="add-farmer-content">
-                    <AddFarmer farmers={farmers} error={error} />
                 </div>
+                : activeTab === "add-farmer"
+                    ?
+                    <div className="add-farmer-content">
+                        <AddFarmer farmers={farmers} error={error} />
+                    </div>
+                    :
+                    <div className="batches-content">
+                        <MilkCollectorBatches batches={existingBatches} />
+                    </div>
             }
         </main>
     );

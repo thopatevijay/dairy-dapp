@@ -45,7 +45,7 @@ const MilkCollectTable = ({ milkCollections, getMilkDataError }) => {
                             )
                         })}
                     </tbody>
-                </table> : "...fetching milk collections "}
+                </table> : "milk collections not found"}
         </div>
 
     )
