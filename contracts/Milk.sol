@@ -34,26 +34,56 @@ contract Milk {
     }
 
     // Struct to update ProductionUpdate in BatchByProcessor
-    struct ProductionUpdate {
+
+    struct InProduction {
         bool isInProduction;
         uint256 quantity;
         uint256 quality;
-        uint256 productionTime;
+        uint256 updatedTime;
+    }
+
+    struct ProductionDone {
+        bool isProductionDone;
+        uint256 quantity;
+        uint256 quality;
+        uint256 updatedTime;
+    }
+
+    struct MoveToDistributor {
         bool isSentToDistributor;
+        uint256 updatedTime;
+    }
+
+    struct ProductionUpdate {
+        InProduction inProduction;
+        ProductionDone productionDone;
+        MoveToDistributor moveToDistributor;
     }
 
     // Struct to update DistributorUpdate in BatchByProcessor
-    struct DistributorUpdate {
+    struct AtDistributor {
         bool accepted;
-        uint256 updatedTime;
+        uint256 quantity;
         uint256 quality;
+        uint256 updatedTime;
+    }
+
+    struct MoveToRetailer {
+        bool isSentToRetailer;
+        uint256 updatedTime;
+    }
+
+    struct DistributorUpdate {
+        AtDistributor atDistributor;
+        MoveToRetailer moveToRetailer;
     }
 
     // Struct to update RetailerUpdate in BatchByProcessor
     struct RetailerUpdate {
         bool accepted;
-        uint256 updatedTime;
+        uint256 quantity;
         uint256 quality;
+        uint256 updatedTime;
     }
 
     // Struct to represent a Batch by milk collector
@@ -153,19 +183,26 @@ contract Milk {
         uint256 batchId = processorBatchIdCounter;
         processorBatchIdCounter++;
 
-        ProductionUpdate memory productionStatus = ProductionUpdate(
+        InProduction memory inProduction = InProduction(false, 0, 0, 0);
+        ProductionDone memory productionDone = ProductionDone(false, 0, 0, 0);
+        MoveToDistributor memory moveToDistributor = MoveToDistributor(
             false,
-            0,
-            0,
-            0,
-            false
-        );
-        DistributorUpdate memory distributorStatus = DistributorUpdate(
-            false,
-            0,
             0
         );
-        RetailerUpdate memory retailerStatus = RetailerUpdate(false, 0, 0);
+        ProductionUpdate memory productionStatus = ProductionUpdate(
+            inProduction,
+            productionDone,
+            moveToDistributor
+        );
+
+        AtDistributor memory atDistributor = AtDistributor(false, 0, 0, 0);
+        MoveToRetailer memory moveToRetailer = MoveToRetailer(false, 0);
+        DistributorUpdate memory distributorStatus = DistributorUpdate(
+            atDistributor,
+            moveToRetailer
+        );
+
+        RetailerUpdate memory retailerStatus = RetailerUpdate(false, 0, 0, 0);
 
         processorBatches[batchId] = BatchByProcessor(
             batchId,
@@ -206,52 +243,73 @@ contract Milk {
         batch.statusUpdateTime = block.timestamp; // update the timestamp
     }
 
-    //.....Events..........
+    //........Events..........
 
-    // Event for Production Update
-    event ProductionUpdateEvent(
+    // Event for start production
+    event StartProductionEvent(
         uint256 indexed batchId,
         bool isInProduction,
         uint256 quantity,
         uint256 quality,
-        uint256 productionTime
+        uint256 updatedTime
     );
 
-    // Event for Distributor Update
-    event DistributorUpdateEvent(
+    // Event for finish production
+    event FinishProductionEvent(
         uint256 indexed batchId,
-        bool accepted,
-        uint256 updatedTime,
-        uint256 quality
+        bool isProductionDone,
+        uint256 quantity,
+        uint256 quality,
+        uint256 updatedTime
     );
 
-    // Event for Retailer Update
-    event RetailerUpdateEvent(
-        uint256 indexed batchId,
-        bool accepted,
-        uint256 updatedTime,
-        uint256 quality
-    );
-
-    // Event for sendtToDistributor update
+    // Event for send to ditributor
     event SendToDistributorEvent(
         uint256 indexed batchId,
-        bool isSentToDistributor
+        bool isSentToDistributor,
+        uint256 updatedTime
     );
 
-    // Function to update production status
-    function updateProductionStatus(
+    // Event for accept batch by processor
+    event AcceptBatchByProcessorEvent(
+        uint256 indexed batchId,
+        bool accepted,
+        uint256 quantity,
+        uint256 quality,
+        uint256 updatedTime
+    );
+
+    // Event for send batch to retailer
+    event SendToRetailerEvent(
+        uint256 batchId,
+        bool isSentToRetailer,
+        uint256 updatedTime
+    );
+
+    // Event for accept by batch by distributor
+    event AcceptBatchByDistributorEvent(
+        uint256 batchId,
+        bool accepted,
+        uint256 quantity,
+        uint256 quality,
+        uint256 updatedTime
+    );
+
+    // Function to move batch from processing to production
+    function startProduction(
         uint256 batchId,
         bool isInProduction,
-        uint256 quality,
-        uint256 quantity
+        uint256 quantity,
+        uint256 quality
     ) public {
         BatchByProcessor storage batch = processorBatches[batchId];
-        batch.productionStatus.isInProduction = isInProduction;
-        batch.productionStatus.quantity = quantity;
-        batch.productionStatus.quality = quality;
-        batch.productionStatus.productionTime = block.timestamp;
-        emit ProductionUpdateEvent(
+
+        batch.productionStatus.inProduction.isInProduction = isInProduction;
+        batch.productionStatus.inProduction.quantity = quantity;
+        batch.productionStatus.inProduction.quality = quality;
+        batch.productionStatus.inProduction.updatedTime = block.timestamp;
+
+        emit StartProductionEvent(
             batchId,
             isInProduction,
             quantity,
@@ -260,35 +318,30 @@ contract Milk {
         );
     }
 
-    // Function to update distributor status
-    function updateDistributorStatus(
+    // Function to finish production
+    function finishProduction(
         uint256 batchId,
-        bool accepted,
+        bool isProductionDone,
+        uint256 quantity,
         uint256 quality
     ) public {
         BatchByProcessor storage batch = processorBatches[batchId];
-        batch.distributorStatus.accepted = accepted;
-        batch.distributorStatus.updatedTime = block.timestamp;
-        batch.distributorStatus.quality = quality;
-        emit DistributorUpdateEvent(
-            batchId,
-            accepted,
-            block.timestamp,
-            quality
-        );
-    }
 
-    // Function to update retailer status
-    function updateRetailerStatus(
-        uint256 batchId,
-        bool accepted,
-        uint256 quality
-    ) public {
-        BatchByProcessor storage batch = processorBatches[batchId];
-        batch.retailerStatus.accepted = accepted;
-        batch.retailerStatus.updatedTime = block.timestamp;
-        batch.retailerStatus.quality = quality;
-        emit RetailerUpdateEvent(batchId, accepted, block.timestamp, quality);
+        batch
+            .productionStatus
+            .productionDone
+            .isProductionDone = isProductionDone;
+        batch.productionStatus.productionDone.updatedTime = block.timestamp;
+        batch.productionStatus.productionDone.quantity = quantity;
+        batch.productionStatus.productionDone.quality = quality;
+
+        emit FinishProductionEvent(
+            batchId,
+            isProductionDone,
+            quantity,
+            quality,
+            block.timestamp
+        );
     }
 
     // Function to send batch to distributor
@@ -296,7 +349,74 @@ contract Milk {
         public
     {
         BatchByProcessor storage batch = processorBatches[batchId];
-        batch.productionStatus.isSentToDistributor = isSentToDistributor;
-        emit SendToDistributorEvent(batchId, isSentToDistributor);
+
+        batch
+            .productionStatus
+            .moveToDistributor
+            .isSentToDistributor = isSentToDistributor;
+        batch.productionStatus.moveToDistributor.updatedTime = block.timestamp;
+
+        emit SendToDistributorEvent(
+            batchId,
+            isSentToDistributor,
+            block.timestamp
+        );
+    }
+
+    // Function to accept batch by processor
+    function acceptBatchByProcessor(
+        uint256 batchId,
+        bool accepted,
+        uint256 quantity,
+        uint256 quality
+    ) public {
+        BatchByProcessor storage batch = processorBatches[batchId];
+
+        batch.distributorStatus.atDistributor.accepted = accepted;
+        batch.distributorStatus.atDistributor.updatedTime = block.timestamp;
+        batch.distributorStatus.atDistributor.quality = quality;
+
+        emit AcceptBatchByProcessorEvent(
+            batchId,
+            accepted,
+            quantity,
+            quality,
+            block.timestamp
+        );
+    }
+
+    // Function to send batch to retailer
+    function sendToRetailer(uint256 batchId, bool isSentToRetailer) public {
+        BatchByProcessor storage batch = processorBatches[batchId];
+
+        batch
+            .distributorStatus
+            .moveToRetailer
+            .isSentToRetailer = isSentToRetailer;
+        batch.distributorStatus.moveToRetailer.updatedTime = block.timestamp;
+
+        emit SendToRetailerEvent(batchId, isSentToRetailer, block.timestamp);
+    }
+
+    // Function to accept batch by distributor
+    function acceptBatchByDistributor(
+        uint256 batchId,
+        bool accepted,
+        uint256 quantity,
+        uint256 quality
+    ) public {
+        BatchByProcessor storage batch = processorBatches[batchId];
+
+        batch.retailerStatus.accepted = accepted;
+        batch.retailerStatus.updatedTime = block.timestamp;
+        batch.retailerStatus.quality = quality;
+
+        emit AcceptBatchByDistributorEvent(
+            batchId,
+            accepted,
+            quantity,
+            quality,
+            block.timestamp
+        );
     }
 }
