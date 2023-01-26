@@ -5,11 +5,14 @@ import AccessDenied from "./components/AccessDenied";
 import BatchesByCollectors from './components/BatchesByCollectors';
 import { getAllBatches, getBatchCollectionIds } from '../database/milk-collector.controller';
 import moment from 'moment';
+import Production from './components/Production';
+import { getAllProcessorsBatches, getProcessorBatchCollectionIds } from '../database/milk-processor.controller';
 
 const MilkProcessor = () => {
     const [activeTab, setActiveTab] = useState("batches");
     const [error, setError] = useState('');
     const [batchesByCollectors, setBatchesByCollectors] = useState([]);
+    const [batchesByProcessor, setBatchesByProcessor] = useState([]);
 
     const { user } = useUserContext();
 
@@ -19,7 +22,7 @@ const MilkProcessor = () => {
         return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
     };
 
-    const getAllBatchesList = useCallback(async () => {
+    const getAllCollectorsBatchesList = useCallback(async () => {
         try {
             const batches = await getAllBatches();
 
@@ -43,12 +46,36 @@ const MilkProcessor = () => {
         }
     }, [setBatchesByCollectors]);
 
+    const getAllProcessorBatchesList = useCallback(async () => {
+        try {
+            const batches = await getAllProcessorsBatches();
+            const batchPromises = batches.map(async (batch) => {
+                const collectionsIds = await getProcessorBatchCollectionIds(batch.batchId);
+
+                return { ...batch, collectionIds: collectionsIds };
+            });
+            const batchesWithCollectionIds = await Promise.all(batchPromises);
+            // console.log(batchesWithCollectionIds)
+            // const batchesWithLocalTimestamp = batchesWithCollectionIds.map((batch) => {
+            //     const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
+            //     const statusUpdateTime = convertTimestamp(batch.statusUpdateTime);
+
+            //     return { ...batch, batchCreatedTime, statusUpdateTime }
+            // })
+            setBatchesByProcessor(batchesWithCollectionIds);
+        } catch (e) {
+            console.log(e);
+            setError('An error occurred. Please try again later.');
+        }
+    }, [setBatchesByProcessor]);
+
     useEffect(() => {
         const interval = setInterval(() => {
-            getAllBatchesList();
+            getAllCollectorsBatchesList();
+            getAllProcessorBatchesList();
         }, 1000);
         return () => clearInterval(interval);
-    }, [getAllBatchesList]);
+    }, [getAllCollectorsBatchesList, getAllProcessorBatchesList]);
 
     if (user && user.role !== "milkprocessor") {
         setTimeout(() => {
@@ -80,7 +107,7 @@ const MilkProcessor = () => {
                 </div>
                 :
                 <div className="production-content">
-                    <div>production</div>
+                    <Production batchesByProcessor={batchesByProcessor} />
                 </div>
             }
         </main>
