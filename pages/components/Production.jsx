@@ -9,6 +9,72 @@ const Production = ({ batchesByProcessor }) => {
         setActiveRow(index === activeRow ? null : index);
     }
 
+    function RenderStatusAndActions({ batch }) {
+        const { inProductionStatus, productionDoneStatus, moveToDistributorStatus } = batch.productionStatus;
+        const { atDistributorStatus, moveToRetailerStatus } = batch.distributorStatus;
+        const retailerStatus = batch.retailerStatus;
+
+        if (retailerStatus.accepted) {
+            return (
+                <span className="bg-red-500 text-white px-5 py-1 rounded-full">
+                    Accepted by  Retailer
+                </span>
+            );
+        } else if (moveToRetailerStatus.isSentToRetailer) {
+            return (
+                <span className="bg-red-500 text-white px-5 py-1 rounded-full">
+                    Sent to Retailer
+                </span>
+            );
+        } else if (atDistributorStatus.accepted) {
+            return (
+                <span className="bg-red-500 text-white px-5 py-1 rounded-full">
+                    Accepted by Distributor
+                </span>
+            );
+        } else if (moveToDistributorStatus.isSentToDistributor) {
+            return (
+                <span className="bg-red-500 text-white px-5 py-1 rounded-full">
+                    Sent to Distributor
+                </span>
+            );
+        } else if (productionDoneStatus.isProductionDone) {
+            return (
+                <>
+                    <span className="bg-red-500 text-white px-5 py-1 rounded-full">
+                        Production Done
+                    </span>
+                    <span className="text-blue-600 px-5 py-1 rounded-full">
+                        Send To Distributor
+                    </span>
+                </>
+            );
+        } else if (inProductionStatus.isInProduction) {
+            return (
+                <>
+                    <span className="bg-red-500 text-white px-5 py-1 rounded-full">
+                        In Production
+                    </span>
+                    <span className="text-blue-600 px-5 py-1 rounded-full">
+                        Mark Production Done
+                    </span>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <span className="bg-green-500 text-white px-5 py-1 rounded-full">
+                        In Processing
+                    </span>
+                    <span className="text-blue-600 px-5 py-1 rounded-full">
+                        Send To Production
+                    </span>
+                </>
+            );
+        }
+    }
+
+
     return (
         <div className="container mx-auto flex justify-between py-5 ">
             <div className="mx-auto">
@@ -35,23 +101,7 @@ const Production = ({ batchesByProcessor }) => {
                                             <td className="px-4 py-2 text-xs">{batch.quantity}</td>
                                             <td className="px-4 py-2 text-xs">{batch.quality}</td>
                                             <td className="px-4 py-2 text-xs">
-                                                {batch.productionStatus.inProductionStatus.isInProduction ?
-                                                    (
-                                                        <span className="bg-green-500 text-white px-5 py-1 rounded-full">
-                                                            In Production
-                                                        </span>
-                                                    ) : (
-                                                        <>
-                                                            <span className="bg-blue-700 text-white px-5 py-1 rounded-full">
-                                                                In Processing
-                                                            </span>
-                                                            <span className="text-blue-600 px-5 py-1 rounded-full">
-                                                                Send To Production
-                                                            </span>
-                                                        </>
-                                                    )
-
-                                                }
+                                                < RenderStatusAndActions batch={batch} />
                                             </td>
                                             <td className="px-4 py-2 text-xs" onClick={() => handleRowClick(index)}>
                                                 <span className="text-blue-600 px-5 py-1 rounded-full" >

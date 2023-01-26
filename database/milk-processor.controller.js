@@ -51,7 +51,7 @@ export async function getAllProcessorsBatches() {
                 updatedTime: productionDoneArray[3].toString(),
             }
 
-            const moveToDistributorSattus = {
+            const moveToDistributorStatus = {
                 isSentToDistributor: moveToDistributorArray[0],
                 updatedTime: moveToDistributorArray[1].toString(),
             }
@@ -87,7 +87,7 @@ export async function getAllProcessorsBatches() {
                 productionStatus: {
                     inProductionStatus,
                     productionDoneStatus,
-                    moveToDistributorSattus
+                    moveToDistributorStatus
                 },
                 distributorStatus: {
                     atDistributorStatus,
