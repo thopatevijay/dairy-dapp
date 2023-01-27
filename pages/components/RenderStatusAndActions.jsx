@@ -1,10 +1,11 @@
 import { sendToProduction, markProductionDone, sendToDistributor } from "../../database/milk-processor.controller";
+import { useDistributor } from "./hooks/useDistributor";
 
-export const RenderStatusAndActions = ({ batch }) => {
+export const RenderStatusAndActions = ({ batch, isProcessor, isDistributor }) => {
+    const { acceptBatchByProcessor, sentToRetailer } = useDistributor();
     const { inProductionStatus, productionDoneStatus, moveToDistributorStatus } = batch.productionStatus;
     const { atDistributorStatus, moveToRetailerStatus } = batch.distributorStatus;
     const retailerStatus = batch.retailerStatus;
-
 
     const handleSendToProduction = async (batchId, isInProduction, quantity, quality) => {
         try {
@@ -41,21 +42,46 @@ export const RenderStatusAndActions = ({ batch }) => {
         );
     } else if (moveToRetailerStatus.isSentToRetailer) {
         return (
-            <span className="bg-red-500 text-white px-5 py-1 rounded-full">
-                Sent to Retailer
-            </span>
+            <>
+                <span className="bg-blue-500 text-white px-5 py-1 rounded-full">
+                    Sent to Retailer
+                </span>
+                {isDistributor &&
+                    <span className="text-blue-600 px-5 py-1 rounded-full"
+                        onClick={() => handleSendToDistributor(batch.batchId, true)} >
+                        At Retailer
+                    </span>
+                }
+            </>
+
         );
     } else if (atDistributorStatus.accepted) {
         return (
-            <span className="bg-red-500 text-white px-5 py-1 rounded-full">
-                Accepted by Distributor
-            </span>
+            <>
+                <span className="bg-green-500 text-white px-5 py-1 rounded-full">
+                    Accepted by Distributor
+                </span>
+                {isDistributor &&
+                    <span className="text-blue-600 px-5 py-1 rounded-full"
+                        onClick={() => sentToRetailer(batch.batchId, true)} >
+                        Send To Retailer
+                    </span>
+                }
+            </>
         );
     } else if (moveToDistributorStatus.isSentToDistributor) {
         return (
-            <span className="bg-blue-500 text-white px-5 py-1 rounded-full">
-                Sent to Distributor
-            </span>
+            <>
+                <span className="bg-blue-500 text-white px-5 py-1 rounded-full">
+                    Sent to Distributor
+                </span>
+                {isDistributor &&
+                    <span className="text-blue-600 px-5 py-1 rounded-full"
+                        onClick={() => acceptBatchByProcessor(batch.batchId, true, batch.quantity, batch.quality)} >
+                        Accept Batch
+                    </span>
+                }
+            </>
         );
     } else if (productionDoneStatus.isProductionDone) {
         return (
@@ -63,10 +89,12 @@ export const RenderStatusAndActions = ({ batch }) => {
                 <span className="bg-green-500 text-white px-5 py-1 rounded-full">
                     Production Done
                 </span>
-                <span className="text-blue-600 px-5 py-1 rounded-full"
-                    onClick={() => handleSendToDistributor(batch.batchId, true)} >
-                    Send To Distributor
-                </span>
+                {isProcessor &&
+                    <span className="text-blue-600 px-5 py-1 rounded-full"
+                        onClick={() => handleSendToDistributor(batch.batchId, true)} >
+                        Send To Distributor
+                    </span>
+                }
             </>
         );
     } else if (inProductionStatus.isInProduction) {
@@ -75,10 +103,12 @@ export const RenderStatusAndActions = ({ batch }) => {
                 <span className="bg-blue-500 text-white px-5 py-1 rounded-full">
                     In Production
                 </span>
-                <span className="text-blue-600 px-5 py-1 rounded-full"
-                    onClick={() => handleMarkProductionDone(batch.batchId, true, batch.quantity, batch.quality)} >
-                    Mark Production Done
-                </span>
+                {isProcessor &&
+                    <span className="text-blue-600 px-5 py-1 rounded-full"
+                        onClick={() => handleMarkProductionDone(batch.batchId, true, batch.quantity, batch.quality)} >
+                        Mark Production Done
+                    </span>
+                }
             </>
         );
     } else {
@@ -87,10 +117,12 @@ export const RenderStatusAndActions = ({ batch }) => {
                 <span className="bg-yellow-500 text-white px-5 py-1 rounded-full">
                     In Processing
                 </span>
-                <span className="text-blue-600 px-5 py-1 rounded-full"
-                    onClick={() => handleSendToProduction(batch.batchId, true, batch.quantity, batch.quality)}>
-                    Send To Production
-                </span>
+                {isProcessor &&
+                    <span className="text-blue-600 px-5 py-1 rounded-full"
+                        onClick={() => handleSendToProduction(batch.batchId, true, batch.quantity, batch.quality)}>
+                        Send To Production
+                    </span>
+                }
             </>
         );
     }
