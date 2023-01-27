@@ -1,13 +1,12 @@
 import React, { useState } from 'react'
 import { RenderStatusAndActions } from './RenderStatusAndActions';
 
-const Production = ({ batchesByProcessor }) => {
+const Production = ({ batchesByProcessor, isProcessor, isDistributor }) => {
     const [activeRow, setActiveRow] = useState(null);
 
     const handleRowClick = (index) => {
         setActiveRow(index === activeRow ? null : index);
     }
-
     return (
         <div className="container mx-auto flex justify-between py-5 ">
             <div className="mx-auto">
@@ -34,7 +33,7 @@ const Production = ({ batchesByProcessor }) => {
                                             <td className="px-4 py-2 text-xs">{batch.quantity}</td>
                                             <td className="px-4 py-2 text-xs">{batch.quality}</td>
                                             <td className="px-4 py-2 text-xs">
-                                                < RenderStatusAndActions batch={batch} />
+                                                < RenderStatusAndActions batch={batch} isProcessor={isProcessor} isDistributor={isDistributor}/>
                                             </td>
                                             <td className="px-4 py-2 text-xs" onClick={() => handleRowClick(index)}>
                                                 <span className="text-blue-600 px-5 py-1 rounded-full" >

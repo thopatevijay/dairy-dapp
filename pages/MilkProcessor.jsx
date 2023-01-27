@@ -44,7 +44,7 @@ const MilkProcessor = () => {
                 </div>
                 :
                 <div className="production-content">
-                    <Production batchesByProcessor={batchesByProcessor} />
+                    <Production batchesByProcessor={batchesByProcessor} isProcessor={true} isDistributor={false}/>
                 </div>
             }
         </main>
