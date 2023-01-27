@@ -112,3 +112,33 @@ export async function getProcessorBatchCollectionIds(batchId) {
         return { Error: error }
     }
 }
+
+export const sendToProduction = async (batchId, isInProduction, quantity, quality) => {
+    try {
+        let txn = await contractInstance.startProduction(batchId, isInProduction, quantity, quality);
+        return txn;
+    } catch (error) {
+        console.error(error)
+        return error;
+    }
+}
+
+export const markProductionDone = async (batchId, isProductionDone, quantity, quality) => {
+    try {
+        let txn = await contractInstance.finishProduction(batchId, isProductionDone, quantity, quality);
+        return txn;
+    } catch (error) {
+        console.error(error)
+        return error;
+    }
+}
+
+export const sendToDistributor = async (batchId, isSentToDistributor) => {
+    try {
+        let txn = await contractInstance.sendToDistributor(batchId, isSentToDistributor);
+        return txn;
+    } catch (error) {
+        console.error(error)
+        return error;
+    }
+}
