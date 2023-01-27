@@ -1,54 +1,18 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUserContext } from '../common/Provider';
 import AccessDenied from "./components/AccessDenied";
 import BatchesByCollectors from './components/BatchesByCollectors';
-import { getAllBatches, getBatchCollectionIds } from '../database/milk-collector.controller';
-import moment from 'moment';
+import Production from './components/Production';
+import { useProcessor } from './components/hooks/useProcessor';
 
 const MilkProcessor = () => {
     const [activeTab, setActiveTab] = useState("batches");
-    const [error, setError] = useState('');
-    const [batchesByCollectors, setBatchesByCollectors] = useState([]);
+    const { batchesByProcessor, batchesByCollectors } = useProcessor();
 
     const { user } = useUserContext();
 
     const router = useRouter();
-
-    const convertTimestamp = (timestamp) => {
-        return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
-    };
-
-    const getAllBatchesList = useCallback(async () => {
-        try {
-            const batches = await getAllBatches();
-
-            const batchPromises = batches.map(async (batch) => {
-                const collectionIds = await getBatchCollectionIds(batch.batchId);
-
-                return { ...batch, collectionIds: collectionIds };
-            });
-            const batchesWithCollectionIds = await Promise.all(batchPromises);
-
-            const batchesWithLocalTimestamp = batchesWithCollectionIds.map((batch) => {
-                const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
-                const statusUpdateTime = convertTimestamp(batch.statusUpdateTime);
-
-                return { ...batch, batchCreatedTime, statusUpdateTime }
-            })
-            setBatchesByCollectors(batchesWithLocalTimestamp);
-        } catch (e) {
-            console.log(e);
-            setError('An error occurred. Please try again later.');
-        }
-    }, [setBatchesByCollectors]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            getAllBatchesList();
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [getAllBatchesList]);
 
     if (user && user.role !== "milkprocessor") {
         setTimeout(() => {
@@ -80,7 +44,7 @@ const MilkProcessor = () => {
                 </div>
                 :
                 <div className="production-content">
-                    <div>production</div>
+                    <Production batchesByProcessor={batchesByProcessor} />
                 </div>
             }
         </main>
