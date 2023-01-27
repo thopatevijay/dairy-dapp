@@ -13,6 +13,25 @@ export function useProcessor() {
         return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
     };
 
+    const getBatchesAndIDs = useCallback( async () => {
+        try {
+            const batches = await getAllProcessorsBatches();
+            const batchPromises = batches.map(async (batch) => {
+                const collectionsIds = await getProcessorBatchCollectionIds(batch.batchId);
+
+                return { ...batch, collectionIds: collectionsIds };
+            });
+            const batchesWithCollectionIds = await Promise.all(batchPromises);
+
+            const allCollectionIds = batchesWithCollectionIds.map((batch) => batch.collectionIds).flat();
+            const uniqueCollectionBatchIds = [...new Set(allCollectionIds)];
+
+            return { batchesWithCollectionIds, uniqueCollectionBatchIds }
+        } catch (e) {
+             console.log(e);
+        }
+    },[]);
+
     const getAllCollectorsBatchesList = useCallback(async () => {
         try {
             const batches = await getAllBatches();
@@ -28,26 +47,27 @@ export function useProcessor() {
                 const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
                 const statusUpdateTime = convertTimestamp(batch.statusUpdateTime);
 
-                return { ...batch, batchCreatedTime, statusUpdateTime }
+                return { ...batch, batchCreatedTime, statusUpdateTime, batchId: Number(batch.batchId) }
             })
-            setBatchesByCollectors(batchesWithLocalTimestamp);
+
+            const { uniqueCollectionBatchIds } = await getBatchesAndIDs();
+
+            const filteredBatchIdThoseAlreadyBatched = batchesWithLocalTimestamp.filter(
+                (collection) => !uniqueCollectionBatchIds.includes(collection.batchId)
+            );
+
+            setBatchesByCollectors(filteredBatchIdThoseAlreadyBatched);
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again later.');
         }
-    }, [setBatchesByCollectors]);
+    }, [getBatchesAndIDs]);
 
     const getAllProcessorBatchesList = useCallback(async () => {
         try {
-            const batches = await getAllProcessorsBatches();
-            const batchPromises = batches.map(async (batch) => {
-                const collectionsIds = await getProcessorBatchCollectionIds(batch.batchId);
+           const { batchesWithCollectionIds } = await getBatchesAndIDs();
 
-                return { ...batch, collectionIds: collectionsIds };
-            });
-            const batchesWithCollectionIds = await Promise.all(batchPromises);
-
-            const batchesWithLocalTimestamp = batchesWithCollectionIds.map((batch) => {
+           const batchesWithLocalTimestamp = batchesWithCollectionIds.map((batch) => {
                 const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
 
                 return { ...batch, batchCreatedTime }
@@ -57,7 +77,7 @@ export function useProcessor() {
             console.log(e);
             setError('An error occurred. Please try again later.');
         }
-    }, [setBatchesByProcessor]);
+    }, [getBatchesAndIDs]);
 
     useEffect(() => {
         const interval = setInterval(() => {
