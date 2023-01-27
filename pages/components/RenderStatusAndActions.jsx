@@ -1,8 +1,10 @@
 import { sendToProduction, markProductionDone, sendToDistributor } from "../../database/milk-processor.controller";
 import { useDistributor } from "./hooks/useDistributor";
+import { useRetailer } from "./hooks/useRetailer";
 
-export const RenderStatusAndActions = ({ batch, isProcessor, isDistributor }) => {
+export const RenderStatusAndActions = ({ batch, isProcessor, isDistributor, isRetailer }) => {
     const { acceptBatchByProcessor, sentToRetailer } = useDistributor();
+    const { acceptBatchByDistributor } = useRetailer();
     const { inProductionStatus, productionDoneStatus, moveToDistributorStatus } = batch.productionStatus;
     const { atDistributorStatus, moveToRetailerStatus } = batch.distributorStatus;
     const retailerStatus = batch.retailerStatus;
@@ -36,7 +38,7 @@ export const RenderStatusAndActions = ({ batch, isProcessor, isDistributor }) =>
 
     if (retailerStatus.accepted) {
         return (
-            <span className="bg-red-500 text-white px-5 py-1 rounded-full">
+            <span className="bg-green-500 text-white px-5 py-1 rounded-full">
                 Accepted by  Retailer
             </span>
         );
@@ -44,12 +46,14 @@ export const RenderStatusAndActions = ({ batch, isProcessor, isDistributor }) =>
         return (
             <>
                 <span className="bg-blue-500 text-white px-5 py-1 rounded-full">
-                    Sent to Retailer
+                    Awaiting Retailer acceptance
                 </span>
-                {isDistributor &&
+                {isRetailer &&
                     <span className="text-blue-600 px-5 py-1 rounded-full"
-                        onClick={() => handleSendToDistributor(batch.batchId, true)} >
-                        At Retailer
+                        onClick={() => acceptBatchByDistributor(
+                            batch.batchId, true, batch.quantity, batch.quality)
+                        } >
+                        Accept Batch
                     </span>
                 }
             </>
@@ -73,7 +77,7 @@ export const RenderStatusAndActions = ({ batch, isProcessor, isDistributor }) =>
         return (
             <>
                 <span className="bg-blue-500 text-white px-5 py-1 rounded-full">
-                    Sent to Distributor
+                    Awaiting Distributor acceptance
                 </span>
                 {isDistributor &&
                     <span className="text-blue-600 px-5 py-1 rounded-full"

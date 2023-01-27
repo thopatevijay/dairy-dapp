@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { RenderStatusAndActions } from './RenderStatusAndActions';
 
-const Production = ({ batchesByProcessor, isProcessor, isDistributor }) => {
+const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer }) => {
     const [activeRow, setActiveRow] = useState(null);
 
     const handleRowClick = (index) => {
@@ -33,7 +33,9 @@ const Production = ({ batchesByProcessor, isProcessor, isDistributor }) => {
                                             <td className="px-4 py-2 text-xs">{batch.quantity}</td>
                                             <td className="px-4 py-2 text-xs">{batch.quality}</td>
                                             <td className="px-4 py-2 text-xs">
-                                                < RenderStatusAndActions batch={batch} isProcessor={isProcessor} isDistributor={isDistributor}/>
+                                                < RenderStatusAndActions batch={batch}
+                                                    isProcessor={isProcessor} isDistributor={isDistributor} isRetailer={isRetailer}
+                                                />
                                             </td>
                                             <td className="px-4 py-2 text-xs" onClick={() => handleRowClick(index)}>
                                                 <span className="text-blue-600 px-5 py-1 rounded-full" >
