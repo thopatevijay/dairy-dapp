@@ -9,7 +9,7 @@ import { useProcessor } from './components/hooks/useProcessor';
 const MilkProcessor = () => {
     const [activeTab, setActiveTab] = useState("batches");
     const { batchesByProcessor, batchesByCollectors } = useProcessor();
-
+    
     const { user } = useUserContext();
 
     const router = useRouter();

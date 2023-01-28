@@ -1,20 +1,12 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { updateCollectorBatchStatus, createProcessorBatch } from '../../database/milk-processor.controller';
-
+import { useProcessor } from './hooks/useProcessor';
 
 const BatchesByCollectors = ({ batchesByCollectors }) => {
   // console.log(batchesByCollectors);
   const [getAcceptedBatches, setGetAcceptedBatches] = useState([]);
   const [activeRow, setActiveRow] = useState(null);
-
-  const handleActionClick = async (id, status) => {
-    try {
-      const res = await updateCollectorBatchStatus(id, status);
-      console.log(res);
-    } catch (error) {
-      console.log(error)
-    }
-  }
+  const { acceptCollectorBatch } = useProcessor();
 
   const getAllAcceptedBatches = useCallback(
     async () => {
@@ -83,7 +75,7 @@ const BatchesByCollectors = ({ batchesByCollectors }) => {
                   <React.Fragment key={index}>
                     <tr
                       className={`bg-white cursor-pointer ${index === activeRow ? 'bg-gray-200' : ''}`}
-                      // onClick={() => handleRowClick(index)}
+                    // onClick={() => handleRowClick(index)}
                     >
                       <td className="px-4 py-2 text-xs">{batch.collectorId}</td>
                       <td className="px-4 py-2 text-xs">{batch.batchId}</td>
@@ -108,13 +100,15 @@ const BatchesByCollectors = ({ batchesByCollectors }) => {
                       <td className="px-4 py-2 text-xs">
                         {batch.accepted ?
                           (
-                            <span className="text-blue-600 px-5 py-1 rounded-full" onClick={() => handleActionClick(batch.batchId, false)}>
+                            <span className="text-blue-600 px-5 py-1 rounded-full"
+                              onClick={() => acceptCollectorBatch(batch.batchId, false)}>
                               Reject
                             </span>
                           )
                           :
                           (
-                            <span className="text-blue-600 px-5 py-1 rounded-full" onClick={() => handleActionClick(batch.batchId, true)}>
+                            <span className="text-blue-600 px-5 py-1 rounded-full"
+                              onClick={() => acceptCollectorBatch(batch.batchId, true)}>
                               Accept
                             </span>
                           )
