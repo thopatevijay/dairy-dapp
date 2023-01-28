@@ -6,6 +6,7 @@ import { contractInstance } from "../../utils/ethers";
 export function useProcessor() {
     const [batchesByProcessor, setBatchesByProcessor] = useState([]);
     const [batchesByCollectors, setBatchesByCollectors] = useState([]);
+    const [getAcceptedBatches, setGetAcceptedBatches] = useState([]);
     const [error, setError] = useState('');
 
 
@@ -107,7 +108,36 @@ export function useProcessor() {
         }
     }, [getBatchesAndIDs]);
 
-    const acceptCollectorBatch = useCallback( async (batchId, newStatus) => {
+    const getAllAcceptedBatches = useCallback(
+        async () => {
+            const filterBatchesByAccepted = batchesByCollectors.filter((batch) => batch.accepted === true);
+            setGetAcceptedBatches(filterBatchesByAccepted);
+        },
+        [batchesByCollectors, setGetAcceptedBatches],
+    )
+
+    const createBatchForProcessing = useCallback(async () => {
+        try {
+            const filterBatchesByAccepted = batchesByCollectors.filter((batch) => batch.accepted === true);
+
+            const getBatchesId = filterBatchesByAccepted.map((batch) => batch.batchId).flat();
+
+            const totalQuantity = filterBatchesByAccepted.reduce((acc, batch) => {
+                return acc + parseFloat(batch.quantity);
+            }, 0);
+
+            const averageQuality = filterBatchesByAccepted.reduce((acc, batch) => {
+                return acc + parseFloat(batch.quality);
+            }, 0) / filterBatchesByAccepted.length;
+
+            const txn = await contractInstance.createProcessorBatch(getBatchesId, totalQuantity, averageQuality);
+            return txn;
+        } catch (error) {
+
+        }
+    }, [batchesByCollectors]);
+
+    const acceptCollectorBatch = useCallback(async (batchId, newStatus) => {
         try {
             const txn = await contractInstance.updateMilkCollectorBatchStatus(batchId, newStatus);
             return txn;
@@ -115,15 +145,16 @@ export function useProcessor() {
             console.error(error)
             return error;
         }
-    },[]);
+    }, []);
 
     useEffect(() => {
         const interval = setInterval(() => {
             getAllCollectorsBatchesList();
             getAllProcessorBatchesList();
+            getAllAcceptedBatches();
         }, 1000);
         return () => clearInterval(interval);
-    }, [getAllCollectorsBatchesList, getAllProcessorBatchesList]);
+    }, [getAllAcceptedBatches, getAllCollectorsBatchesList, getAllProcessorBatchesList]);
 
-    return { batchesByProcessor, batchesByCollectors, acceptCollectorBatch }
+    return { batchesByProcessor, batchesByCollectors, acceptCollectorBatch, createBatchForProcessing, getAcceptedBatches }
 }
