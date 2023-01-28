@@ -1,40 +1,14 @@
-import { sendToProduction, markProductionDone, sendToDistributor } from "../../database/milk-processor.controller";
 import { useDistributor } from "./hooks/useDistributor";
 import { useRetailer } from "./hooks/useRetailer";
+import { useProcessor } from "./hooks/useProcessor";
 
 export const RenderStatusAndActions = ({ batch, isProcessor, isDistributor, isRetailer }) => {
     const { acceptBatchByProcessor, sentToRetailer } = useDistributor();
     const { acceptBatchByDistributor } = useRetailer();
+    const { handleSendToProduction, handleMarkProductionDone, handleSendToDistributor } = useProcessor();
     const { inProductionStatus, productionDoneStatus, moveToDistributorStatus } = batch.productionStatus;
     const { atDistributorStatus, moveToRetailerStatus } = batch.distributorStatus;
     const retailerStatus = batch.retailerStatus;
-
-    const handleSendToProduction = async (batchId, isInProduction, quantity, quality) => {
-        try {
-            const res = await sendToProduction(batchId, isInProduction, quantity, quality);
-            console.log(res);
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handleMarkProductionDone = async (batchId, isProductionDone, quantity, quality) => {
-        try {
-            const res = await markProductionDone(batchId, isProductionDone, quantity, quality);
-            console.log(res);
-        } catch (error) {
-            console.log(error)
-        }
-    }
-
-    const handleSendToDistributor = async (batchId, isSentToDistributor) => {
-        try {
-            const res = await sendToDistributor(batchId, isSentToDistributor);
-            console.log(res);
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
     if (retailerStatus.accepted) {
         return (
