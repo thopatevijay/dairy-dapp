@@ -11,8 +11,9 @@ const MilkCollector = () => {
     const [activeTab, setActiveTab] = useState("milk-collection");
     const [error, setError] = useState('');
     const { user } = useUserContext();
-    const { farmers, milkCollections, existingBatches } = useCollector({ user });
     const router = useRouter();
+    const { farmers, milkCollections, existingBatches } = useCollector({ user });
+
 
     if (user && user.role !== "milkcollector") {
         setTimeout(() => {

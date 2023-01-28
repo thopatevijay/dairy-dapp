@@ -8,7 +8,7 @@ import { useUserContext } from '../../common/Provider';
 const AddMilkCollection = ({ milkCollections, getMilkDataError, farmers, milkCollectorId }) => {
     const [formVisible, setFormVisible] = useState(false)
     const { user } = useUserContext();
-
+    
     const handleToggleForm = () => {
         setFormVisible(!formVisible);
     }

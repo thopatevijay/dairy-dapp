@@ -134,6 +134,15 @@ contract Milk {
         emit AddFarmerEvent(milkCollectorId, name);
     }
 
+    // Event for collect milk
+    event CollectMilkEvent(
+        uint256 indexed milkCollectorId,
+        uint256 farmerId,
+        uint256 quantity,
+        uint256 quality,
+        uint256 timestamp
+    );
+
     // Function to collect milk from a farmer
     function collectMilk(
         uint256 milkCollectorId,
@@ -154,6 +163,14 @@ contract Milk {
             block.timestamp
         );
         milkCollectionCounter++;
+
+        emit CollectMilkEvent(
+            milkCollectorId,
+            farmerId,
+            quantity,
+            quality,
+            block.timestamp
+        );
     }
 
     // Function to create a batch by milk collectors

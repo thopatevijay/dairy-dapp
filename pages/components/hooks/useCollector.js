@@ -24,30 +24,19 @@ export function useCollector({ user }) {
         }
     }, [user]);
 
-    const collectMilk = useCallback( async (e, farmerId, milkQuantity, milkQuality) => {
-        e.preventDefault();
-        try {
-            const txn = await contractInstance.collectMilk(user.id, farmerId, milkQuantity, milkQuality);
-            console.log(txn);
-        } catch (error) {
-            console.error(error)
-            return error;
-        }
-    },[user?.id])
-    
     const getFarmersList = useCallback(async () => {
         if (user) {
             try {
                 const farmerCount = await contractInstance.farmerIdCounter();
-                let farmers = [];
+                let farmersList = [];
 
                 for (let i = 1; i < farmerCount; i++) {
                     const farmer = await contractInstance.farmers(i);
 
-                    farmers.push(farmer);
+                    farmersList.push(farmer);
                 }
 
-                const convertAllFarmersToArrayOfJS = farmers.map(farmer => {
+                const convertAllFarmersToArrayOfJS = farmersList.map(farmer => {
                     return {
                         farmerId: farmer[0].toString(),
                         name: farmer[1].toString(),
@@ -59,6 +48,7 @@ export function useCollector({ user }) {
                     farmer.milkCollectorId === user.id);
                 console.log(filterFarmersByMilkCollectorID);
                 setFarmers(filterFarmersByMilkCollectorID);
+                return filterFarmersByMilkCollectorID;
             } catch (error) {
                 console.error(error)
                 return error;
@@ -111,18 +101,18 @@ export function useCollector({ user }) {
         }
     }, [getBatchCollectionIds]);
 
-    const getAllCollctedMilk = useCallback(async () => {
+    const getAllCollectedMilk = useCallback(async () => {
         try {
             const milkCollectionCount = await contractInstance.milkCollectionCounter();
-            let milkCollections = [];
+            let milkCollectionsList = [];
 
             for (let i = 1; i < milkCollectionCount; i++) {
                 const milkCollection = await contractInstance.milkCollections(i);
 
-                milkCollections.push(milkCollection);
+                milkCollectionsList.push(milkCollection);
             }
 
-            const convertMilkCollectionsToArrayOfJS = milkCollections = milkCollections.map((collection, index) => {
+            const convertMilkCollectionsToArrayOfJS = milkCollectionsList.map((collection, index) => {
                 return {
                     collectionId: index + 1,
                     milkCollectorId: collection[0].toString(),
@@ -132,9 +122,10 @@ export function useCollector({ user }) {
                     timestamp: collection[4].toString()
                 }
             });
-
+            const filterFarmersByMilkCollectorID = await getFarmersList();
             const milkCollectionsWithFarmerName = convertMilkCollectionsToArrayOfJS.map((milkCollection) => {
-                const farmer = farmers.find((farmer) => farmer.farmerId === milkCollection.farmerId);
+                
+                const farmer = filterFarmersByMilkCollectorID.find((farmer) => farmer.farmerId === milkCollection.farmerId);
                 const newTime = convertTimestamp(milkCollection.timestamp);
 
                 return { ...milkCollection, farmerName: farmer.name, timestamp: newTime }
@@ -145,6 +136,8 @@ export function useCollector({ user }) {
             )
 
             const batchesWithCollectionIds = await getAllBatches();
+
+            console.log(batchesWithCollectionIds);
 
             const allCollectionIds = batchesWithCollectionIds.map((batch) => batch.collectionIds).flat();
             const uniqueCollectionIds = [...new Set(allCollectionIds)];
@@ -159,31 +152,39 @@ export function useCollector({ user }) {
 
                 return { ...batch, batchCreatedTime, statusUpdateTime }
             })
-
+           
             const filterBatchesByCollectorId = timestampConvertedBatces.filter((batch) =>
                 batch.collectorId === user.id
             );
+
 
             setExistingBatches(filterBatchesByCollectorId);
             setMilkCollections(filteredMilkCollectionsExcludingBatches);
         } catch (error) {
             return { Error: error }
         }
-    }, [farmers, getAllBatches, user?.id]);
+    }, [getAllBatches, user?.id, setExistingBatches, setMilkCollections, getFarmersList]);
+
+
+    const collectMilk = useCallback(async (e, farmerId, milkQuantity, milkQuality) => {
+        e.preventDefault();
+        try {
+            const txn = await contractInstance.collectMilk(user.id, farmerId, milkQuantity, milkQuality);
+            console.log(txn);
+        } catch (error) {
+            console.error(error)
+            return error;
+        }
+    }, [user?.id])
 
     useEffect(() => {
+        
+        getFarmersList();
+        getAllCollectedMilk();
+        contractInstance.on("AddFarmerEvent", () => getFarmersList());
 
-        contractInstance.on("AddFarmerEvent", (milkCollectorId, name, event) => {
-            console.log({
-                milkCollectorId,
-                name,
-                event
-            })
-            getFarmersList();
-        });
-
-        getAllCollctedMilk();
-    }, [getAllCollctedMilk]);
+        contractInstance.on("CollectMilkEvent", () => getAllCollectedMilk());
+    }, [getAllCollectedMilk, getFarmersList]);
 
     return { addFarmer, farmers, milkCollections, existingBatches, collectMilk }
 }
