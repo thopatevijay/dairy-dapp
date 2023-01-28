@@ -1,6 +1,6 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useUserContext } from '../../common/Provider';
-import { submitMilkData } from '../../common/Provider/lib/helper';
+import { useCollector } from './hooks/useCollector';
 
 const MilkCollectForm = ({ farmers }) => {
     const [farmerId, setFarmerId] = useState('');
@@ -8,25 +8,10 @@ const MilkCollectForm = ({ farmers }) => {
     const [milkQuality, setMilkQuality] = useState('');
     const [error, setError] = useState('');
     const { user } = useUserContext();
-
-    const handleSubmit = useCallback(async (e) => {
-        e.preventDefault();
-        try {
-            const response = await submitMilkData({ milkCollectorId: user.id, farmerId, milkQuantity, milkQuality });
-            if (response.ok) {
-                console.log('milk data submittted');
-            } else {
-                const data = await response.json();
-                setError(data.error);
-            }
-        } catch (err) {
-            console.error(err);
-            setError('An error occurred. Please try again later.');
-        }
-    }, [farmerId, milkQuality, milkQuantity, user.id]);
+    const { collectMilk } = useCollector({ user });
 
     return (
-        <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>
+        <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={(e) => collectMilk(e, farmerId, milkQuantity, milkQuality)}>
             {error && <p className="text-red-500">{error}</p>}
 
             <div className="input-type">

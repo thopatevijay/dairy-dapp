@@ -24,7 +24,17 @@ export function useCollector({ user }) {
         }
     }, [user]);
 
-
+    const collectMilk = useCallback( async (e, farmerId, milkQuantity, milkQuality) => {
+        e.preventDefault();
+        try {
+            const txn = await contractInstance.collectMilk(user.id, farmerId, milkQuantity, milkQuality);
+            console.log(txn);
+        } catch (error) {
+            console.error(error)
+            return error;
+        }
+    },[user?.id])
+    
     const getFarmersList = useCallback(async () => {
         if (user) {
             try {
@@ -55,7 +65,6 @@ export function useCollector({ user }) {
             }
         }
     }, [user, setFarmers]);
-
 
     const getBatchCollectionIds = useCallback(async (batchId) => {
         try {
@@ -173,11 +182,8 @@ export function useCollector({ user }) {
             getFarmersList();
         });
 
-        const interval = setInterval(() => {
-            getAllCollctedMilk();
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [getAllCollctedMilk, getFarmersList]);
+        getAllCollctedMilk();
+    }, [getAllCollctedMilk]);
 
-    return { addFarmer, farmers, milkCollections, existingBatches }
+    return { addFarmer, farmers, milkCollections, existingBatches, collectMilk }
 }
