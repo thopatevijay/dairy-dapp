@@ -50,7 +50,16 @@ export function useCollector({ user }) {
     }, [user, setFarmers]);
 
     useEffect(() => {
-        getFarmersList();
+
+        contractInstance.on("AddFarmerEvent", (milkCollectorId, name, event) => {
+            console.log({
+                milkCollectorId,
+                name,
+                event
+            })
+            getFarmersList();
+        });
+      
     }, [getFarmersList]);
 
     return { addFarmer, farmers }

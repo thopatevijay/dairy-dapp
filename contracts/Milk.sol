@@ -122,12 +122,16 @@ contract Milk {
     // Counter for assigning unique IDs to processorBatches
     uint256 public processorBatchIdCounter = 1;
 
+    // Event for add farmer
+    event AddFarmerEvent(uint256 indexed milkCollectorId, string name);
+
     // Function to add a farmer to the contract
     function addFarmer(uint256 milkCollectorId, string memory name) public {
         uint256 farmerId = farmerIdCounter;
         farmerIdCounter++;
         // Create a farmer struct and add it to the farmers mapping
         farmers[farmerId] = Farmer(farmerId, name, 0, 0, milkCollectorId);
+        emit AddFarmerEvent(milkCollectorId, name);
     }
 
     // Function to collect milk from a farmer
