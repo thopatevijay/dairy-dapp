@@ -173,6 +173,15 @@ contract Milk {
         );
     }
 
+    // Event for create milk collector batch
+    event CreateMilkCollectorBatchEvent(
+        uint256 indexed batchId,
+        uint256 collectorId,
+        uint256 batchCreatedTime,
+        uint256 quantity,
+        uint256 quality
+    );
+
     // Function to create a batch by milk collectors
     function createMilkCollectorBatch(
         uint256 collectorId,
@@ -192,6 +201,14 @@ contract Milk {
             quality,
             false,
             block.timestamp
+        );
+
+        emit CreateMilkCollectorBatchEvent(
+            batchId,
+            collectorId,
+            block.timestamp,
+            quantity,
+            quality
         );
     }
 

@@ -124,7 +124,7 @@ export function useCollector({ user }) {
             });
             const filterFarmersByMilkCollectorID = await getFarmersList();
             const milkCollectionsWithFarmerName = convertMilkCollectionsToArrayOfJS.map((milkCollection) => {
-                
+
                 const farmer = filterFarmersByMilkCollectorID.find((farmer) => farmer.farmerId === milkCollection.farmerId);
                 const newTime = convertTimestamp(milkCollection.timestamp);
 
@@ -152,7 +152,7 @@ export function useCollector({ user }) {
 
                 return { ...batch, batchCreatedTime, statusUpdateTime }
             })
-           
+
             const filterBatchesByCollectorId = timestampConvertedBatces.filter((batch) =>
                 batch.collectorId === user.id
             );
@@ -177,14 +177,42 @@ export function useCollector({ user }) {
         }
     }, [user?.id])
 
+    const createMilkCollectorBatch = useCallback(async (e) => {
+        e.preventDefault();
+        if (user) {
+
+            try {
+                const filterCollectionsToBeBatched = milkCollections.map((collection) =>
+                    collection.collectionId)
+
+                const totalQuantity = milkCollections.reduce((acc, collection) => {
+                    console.log(acc)
+                    return acc + parseFloat(collection.quantity);
+                }, 0);
+
+                const averageQuality = milkCollections.reduce((acc, collection) => {
+                    return acc + parseFloat(collection.quality);
+                }, 0) / milkCollections.length;
+
+                const txn = await contractInstance.createMilkCollectorBatch(user.id,
+                    filterCollectionsToBeBatched, totalQuantity, averageQuality);
+                console.log(txn);
+            } catch (err) {
+                console.error(err);
+            }
+        }
+    }, [milkCollections, user]);
+
     useEffect(() => {
-        
-        getFarmersList();
-        getAllCollectedMilk();
+
+        // getFarmersList();
+        // getAllCollectedMilk();
         contractInstance.on("AddFarmerEvent", () => getFarmersList());
 
         contractInstance.on("CollectMilkEvent", () => getAllCollectedMilk());
+        
+        contractInstance.on("CreateMilkCollectorBatchEvent", () => getAllCollectedMilk());
     }, [getAllCollectedMilk, getFarmersList]);
 
-    return { addFarmer, farmers, milkCollections, existingBatches, collectMilk }
+    return { addFarmer, farmers, milkCollections, existingBatches, collectMilk, createMilkCollectorBatch}
 }
