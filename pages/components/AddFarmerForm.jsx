@@ -1,30 +1,16 @@
 import React, { useState, useCallback } from 'react';
 import { useUserContext } from '../../common/Provider';
 import { addNewFarmer } from '../../common/Provider/lib/helper';
+import { useCollector } from './hooks/useCollector';
 
 const AddFarmerForm = () => {
     const [farmerName, setFarmerName] = useState('');
     const [error, setError] = useState('');
     const { user } = useUserContext();
-
-    const handleSubmit = useCallback(async (e) => {
-        e.preventDefault();
-        try {
-            const response = await addNewFarmer({ milkCollectorId: user.id, farmerName});
-            if (response.ok) {
-                console.log('Farmer Added');
-            } else {
-                const data = await response.json();
-                setError(data.error);
-            }
-        } catch (err) {
-            console.error(err);
-            setError('An error occurred. Please try again later.');
-        }
-    },[farmerName, user.id]);
+    const { addFarmer } = useCollector({ user, farmerName});
 
     return (
-        <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={handleSubmit}>
+        <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={addFarmer}>
             {error && <p className="text-red-500">{error}</p>}
 
             <div className="input-type">
