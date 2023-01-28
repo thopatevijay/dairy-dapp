@@ -7,10 +7,10 @@ const AddFarmerForm = () => {
     const [farmerName, setFarmerName] = useState('');
     const [error, setError] = useState('');
     const { user } = useUserContext();
-    const { addFarmer } = useCollector({ user, farmerName});
+    const { addFarmer } = useCollector({ user });
 
     return (
-        <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={addFarmer}>
+        <form className="grid lg:grid-cols-2 w-4/6 gap-4" onSubmit={(e) => addFarmer(farmerName, e)}>
             {error && <p className="text-red-500">{error}</p>}
 
             <div className="input-type">

@@ -8,15 +8,17 @@ import AddFarmer from './components/AddFarmer';
 import moment from 'moment';
 import { getAllBatches, getBatchCollectionIds } from '../database/milk-collector.controller';
 import MilkCollectorBatches from './components/MilkCollectorBatches';
+import { useCollector } from './components/hooks/useCollector';
 
 const MilkCollector = () => {
     const [milkCollections, setMilkCollections] = useState([]);
     const [existingBatches, setExistingBatches] = useState([]);
-    const [farmers, setFarmers] = useState([]);
     const [activeTab, setActiveTab] = useState("milk-collection");
     const [error, setError] = useState('');
     const { user } = useUserContext();
+    const { farmers } = useCollector({ user });
     const router = useRouter();
+
 
     const convertTimestamp = (timestamp) => {
         return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
@@ -89,28 +91,12 @@ const MilkCollector = () => {
         }
     }, [getAllBatchesList, user, setExistingBatches]);
 
-    const getFarmersList = useCallback(async () => {
-        if (user) {
-            try {
-                const farmers = await getFarmers();
-                const filterFarmersByMilkCollectorID = farmers.filter((farmer) =>
-                    farmer.milkCollectorId === user.id
-                )
-                setFarmers(filterFarmersByMilkCollectorID);
-            } catch (e) {
-                console.log(e);
-                setError('An error occurred. Please try again later.');
-            }
-        }
-    }, [user]);
-
     useEffect(() => {
         const interval = setInterval(() => {
             getMillColletionList();
-            getFarmersList();
         }, 1000);
         return () => clearInterval(interval);
-    }, [getFarmersList, getMillColletionList]);
+    }, [getMillColletionList]);
 
 
     if (user && user.role !== "milkcollector") {
