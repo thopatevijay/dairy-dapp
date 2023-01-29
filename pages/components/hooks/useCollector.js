@@ -205,7 +205,7 @@ export function useCollector({ user }) {
 
     useEffect(() => {
 
-        // getFarmersList();
+        getFarmersList();
         // getAllCollectedMilk();
         contractInstance.on("AddFarmerEvent", () => getFarmersList());
 
