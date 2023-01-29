@@ -276,11 +276,18 @@ export function useProcessor() {
         contractInstance.on("CreateMilkCollectorBatchEvent", () => getAllCollectorsBatchesList());
 
         contractInstance.on("AcceptBatchByCollectorsEvent", () => getAllCollectorsBatchesList());
-        
+
         contractInstance.on("CreateProcessorBatchEvent", () => {
             getAllCollectorsBatchesList();
             getAllProcessorBatchesList();
         });
+
+        contractInstance.on("StartProductionEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("FinishProductionEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("SendToDistributorEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("AcceptBatchByProcessorEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("SendToRetailerEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("AcceptBatchByDistributorEvent", () => getAllProcessorBatchesList());
 
     }, [getAllCollectorsBatchesList, getAllProcessorBatchesList]);
 
