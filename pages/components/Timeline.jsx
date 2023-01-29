@@ -6,10 +6,10 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
 
     return (
         <div>
-            <ol className="border-l-2 border-blue-600 ml-16 mt-4">
+            <ol className="border-l-2 border-gray-400 ml-16 mt-4">
                 <li>
                     <div className="flex flex-start items-center">
-                        <div className="bg-blue-600 w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2"></div>
+                        <div className={`${inProductionStatus.isInProduction ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Processing finished</h4>
                     </div>
                     <div className="ml-6 mb-6 ">
@@ -21,7 +21,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                 </li>
                 <li>
                     <div className="flex flex-start items-center">
-                        <div className="bg-blue-600 w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2"></div>
+                        <div className={`${inProductionStatus.isInProduction ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Production started</h4>
                     </div>
                     <div className="ml-6 mb-6 ">
@@ -35,7 +35,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                 </li>
                 <li>
                     <div className="flex flex-start items-center">
-                        <div className="bg-blue-600 w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2"></div>
+                        <div className={`${productionDoneStatus.isProductionDone ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Production finished</h4>
                     </div>
                     <div className="ml-6 mb-6 ">
@@ -49,7 +49,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                 </li>
                 <li>
                     <div className="flex flex-start items-center">
-                        <div className="bg-blue-600 w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2"></div>
+                        <div className={`${moveToDistributorStatus.isSentToDistributor ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Sent to distributor</h4>
                     </div>
                     <div className="ml-6 mb-6 ">
@@ -61,7 +61,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                 </li>
                 <li>
                     <div className="flex flex-start items-center">
-                        <div className="bg-blue-600 w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2"></div>
+                        <div className={`${atDistributorStatus.accepted ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Accepted by distributor</h4>
                     </div>
                     <div className="ml-6 mb-6 ">
@@ -75,7 +75,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                 </li>
                 <li>
                     <div className="flex flex-start items-center">
-                        <div className="bg-blue-600 w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2"></div>
+                        <div className={`${moveToRetailerStatus.isSentToRetailer ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Sent to retailer</h4>
                     </div>
                     <div className="ml-6 mb-6 ">
@@ -87,7 +87,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                 </li>
                 <li>
                     <div className="flex flex-start items-center">
-                        <div className="bg-blue-600 w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2"></div>
+                        <div className={`${retailerStatus.accepted ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Accepted by retailer</h4>
                     </div>
                     <div className="ml-6 mb-6 ">
