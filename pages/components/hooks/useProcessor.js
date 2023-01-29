@@ -266,12 +266,17 @@ export function useProcessor() {
     }
 
     useEffect(() => {
-            getAllAcceptedBatches();
+        getAllAcceptedBatches();
     }, [getAllAcceptedBatches]);
 
     useEffect(() => {
-            getAllCollectorsBatchesList();
-            getAllProcessorBatchesList();
+        getAllCollectorsBatchesList();
+        getAllProcessorBatchesList();
+
+        contractInstance.on("CreateMilkCollectorBatchEvent", () => getAllCollectorsBatchesList());
+
+        contractInstance.on("AcceptBatchByCollectorsEvent", () => getAllCollectorsBatchesList());
+
     }, [getAllCollectorsBatchesList, getAllProcessorBatchesList]);
 
     return {

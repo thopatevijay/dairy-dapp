@@ -272,6 +272,13 @@ contract Milk {
         return processorBatches[batchId].collectorBatchesIds;
     }
 
+    // Event for Accept batch from collectors
+    event AcceptBatchByCollectorsEvent(
+        uint256 indexed batchId,
+        bool newStatus,
+        uint256 statusUpdateTime
+    );
+
     // Function to update the accepted status of milk collector batch
     function updateMilkCollectorBatchStatus(uint256 batchId, bool newStatus)
         public
@@ -279,6 +286,8 @@ contract Milk {
         BatchByCollector storage batch = collectorBatches[batchId];
         batch.accepted = newStatus; //update the accepted status
         batch.statusUpdateTime = block.timestamp; // update the timestamp
+
+        emit AcceptBatchByCollectorsEvent(batchId, newStatus, block.timestamp);
     }
 
     //........Events..........

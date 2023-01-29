@@ -206,12 +206,15 @@ export function useCollector({ user }) {
     useEffect(() => {
 
         getFarmersList();
-        // getAllCollectedMilk();
+        getAllCollectedMilk();
         contractInstance.on("AddFarmerEvent", () => getFarmersList());
 
         contractInstance.on("CollectMilkEvent", () => getAllCollectedMilk());
         
         contractInstance.on("CreateMilkCollectorBatchEvent", () => getAllCollectedMilk());
+
+        contractInstance.on("AcceptBatchByCollectorsEvent", () => getAllCollectedMilk());
+
     }, [getAllCollectedMilk, getFarmersList]);
 
     return { addFarmer, farmers, milkCollections, existingBatches, collectMilk, createMilkCollectorBatch}
