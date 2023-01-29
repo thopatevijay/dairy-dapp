@@ -3,7 +3,6 @@ import { RenderStatusAndActions } from './RenderStatusAndActions';
 
 const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer }) => {
     const [activeRow, setActiveRow] = useState(null);
-
     const handleRowClick = (index) => {
         setActiveRow(index === activeRow ? null : index);
     }
@@ -52,7 +51,7 @@ const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer
                                                                 Processing finished time :
                                                             </span>
                                                             <span className="inline-block leading-1 ml-1 font-medium text-blue-500">
-                                                                11:01:09 AM : 26/01/2023
+                                                                {batch.productionStatus.inProductionStatus.updatedTime}
                                                             </span>
                                                         </div>
                                                         <div className='mt-2 '>
@@ -61,7 +60,7 @@ const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer
                                                                     Production started time :
                                                                 </span>
                                                                 <span className="inline-block leading-1 ml-1 font-medium text-[#a68383]">
-                                                                    11:01:09 AM : 26/01/2023
+                                                                    {batch.productionStatus.inProductionStatus.updatedTime}
                                                                 </span>
                                                             </div>
                                                             <div className="flex justify-center">
@@ -85,7 +84,7 @@ const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer
                                                                     Production finished time :
                                                                 </span>
                                                                 <span className="inline-block leading-1 ml-1 font-medium text-[#224040]">
-                                                                    11:01:09 AM : 26/01/2023
+                                                                    {batch.productionStatus.productionDoneStatus.updatedTime}
                                                                 </span>
                                                             </div>
                                                             <div className="flex justify-center">
@@ -109,7 +108,37 @@ const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer
                                                                     Sent to distributor time :
                                                                 </span>
                                                                 <span className="inline-block leading-1 ml-1 font-medium text-[#8465c7]">
-                                                                    11:01:09 AM : 26/01/2023
+                                                                    {batch.productionStatus.moveToDistributorStatus.updatedTime}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className='mt-2'>
+                                                            <div className="flex justify-center">
+                                                                <span className="inline-block leading-1 font-medium text-[#8465c7]">
+                                                                    Accepted by distributor :
+                                                                </span>
+                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#8465c7]">
+                                                                    {batch.distributorStatus.atDistributorStatus.updatedTime}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className='mt-2'>
+                                                            <div className="flex justify-center">
+                                                                <span className="inline-block leading-1 font-medium text-[#8465c7]">
+                                                                    Sent to retailer time :
+                                                                </span>
+                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#8465c7]">
+                                                                    {batch.distributorStatus.moveToRetailerStatus.updatedTime}
+                                                                </span>
+                                                            </div>
+                                                        </div>
+                                                        <div className='mt-2'>
+                                                            <div className="flex justify-center">
+                                                                <span className="inline-block leading-1 font-medium text-[#8465c7]">
+                                                                    Accepted by retailer :
+                                                                </span>
+                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#8465c7]">
+                                                                    {batch.retailerStatus.updatedTime}
                                                                 </span>
                                                             </div>
                                                         </div>
