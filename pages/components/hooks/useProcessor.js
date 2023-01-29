@@ -201,7 +201,6 @@ export function useProcessor() {
     const getAllAcceptedBatches = useCallback(
         async () => {
             const filterBatchesByAccepted = batchesByCollectors.filter((batch) => batch.accepted === true);
-            console.log(filterBatchesByAccepted);
             setGetAcceptedBatches(filterBatchesByAccepted);
         },
         [batchesByCollectors, setGetAcceptedBatches],
