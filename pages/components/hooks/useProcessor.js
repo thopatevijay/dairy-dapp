@@ -180,7 +180,7 @@ export function useProcessor() {
             console.log(e);
             setError('An error occurred. Please try again later.');
         }
-    }, [getBatchCollectionIds, getBatchesAndIDs]);
+    }, [getBatchCollectionIds, getBatchesAndIDs, setBatchesByCollectors]);
 
     const getAllProcessorBatchesList = useCallback(async () => {
         try {
@@ -265,13 +265,30 @@ export function useProcessor() {
     }
 
     useEffect(() => {
-        const interval = setInterval(() => {
+        getAllAcceptedBatches();
+    }, [getAllAcceptedBatches]);
+
+    useEffect(() => {
+        getAllCollectorsBatchesList();
+        getAllProcessorBatchesList();
+
+        contractInstance.on("CreateMilkCollectorBatchEvent", () => getAllCollectorsBatchesList());
+
+        contractInstance.on("AcceptBatchByCollectorsEvent", () => getAllCollectorsBatchesList());
+
+        contractInstance.on("CreateProcessorBatchEvent", () => {
             getAllCollectorsBatchesList();
             getAllProcessorBatchesList();
-            getAllAcceptedBatches();
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [getAllAcceptedBatches, getAllCollectorsBatchesList, getAllProcessorBatchesList]);
+        });
+
+        contractInstance.on("StartProductionEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("FinishProductionEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("SendToDistributorEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("AcceptBatchByProcessorEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("SendToRetailerEvent", () => getAllProcessorBatchesList());
+        contractInstance.on("AcceptBatchByDistributorEvent", () => getAllProcessorBatchesList());
+
+    }, [getAllCollectorsBatchesList, getAllProcessorBatchesList]);
 
     return {
         batchesByProcessor,

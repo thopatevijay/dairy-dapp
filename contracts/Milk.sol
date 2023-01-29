@@ -212,6 +212,14 @@ contract Milk {
         );
     }
 
+    // Event for create processor batch
+    event CreateProcessorBatchEvent(
+        uint256 indexed batchId,
+        uint256 batchCreatedTime,
+        uint256 quantity,
+        uint256 quality
+    );
+
     // Function to create a batch by milk processor
     function createProcessorBatch(
         uint256[] memory collectorBatchesIds,
@@ -252,6 +260,13 @@ contract Milk {
             distributorStatus,
             retailerStatus
         );
+
+        emit CreateProcessorBatchEvent(
+            batchId,
+            block.timestamp,
+            quantity,
+            quantity
+        );
     }
 
     // Function to get collections ID's from batches
@@ -272,6 +287,13 @@ contract Milk {
         return processorBatches[batchId].collectorBatchesIds;
     }
 
+    // Event for Accept batch from collectors
+    event AcceptBatchByCollectorsEvent(
+        uint256 indexed batchId,
+        bool newStatus,
+        uint256 statusUpdateTime
+    );
+
     // Function to update the accepted status of milk collector batch
     function updateMilkCollectorBatchStatus(uint256 batchId, bool newStatus)
         public
@@ -279,6 +301,8 @@ contract Milk {
         BatchByCollector storage batch = collectorBatches[batchId];
         batch.accepted = newStatus; //update the accepted status
         batch.statusUpdateTime = block.timestamp; // update the timestamp
+
+        emit AcceptBatchByCollectorsEvent(batchId, newStatus, block.timestamp);
     }
 
     //........Events..........
