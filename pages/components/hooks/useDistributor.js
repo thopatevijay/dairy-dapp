@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState } from 'react';
 import { contractInstance } from "../../utils/ethers";
 
 export function useDistributor() {
