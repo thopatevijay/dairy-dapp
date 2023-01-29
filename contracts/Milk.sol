@@ -122,13 +122,26 @@ contract Milk {
     // Counter for assigning unique IDs to processorBatches
     uint256 public processorBatchIdCounter = 1;
 
+    // Event for add farmer
+    event AddFarmerEvent(uint256 indexed milkCollectorId, string name);
+
     // Function to add a farmer to the contract
     function addFarmer(uint256 milkCollectorId, string memory name) public {
         uint256 farmerId = farmerIdCounter;
         farmerIdCounter++;
         // Create a farmer struct and add it to the farmers mapping
         farmers[farmerId] = Farmer(farmerId, name, 0, 0, milkCollectorId);
+        emit AddFarmerEvent(milkCollectorId, name);
     }
+
+    // Event for collect milk
+    event CollectMilkEvent(
+        uint256 indexed milkCollectorId,
+        uint256 farmerId,
+        uint256 quantity,
+        uint256 quality,
+        uint256 timestamp
+    );
 
     // Function to collect milk from a farmer
     function collectMilk(
@@ -150,7 +163,24 @@ contract Milk {
             block.timestamp
         );
         milkCollectionCounter++;
+
+        emit CollectMilkEvent(
+            milkCollectorId,
+            farmerId,
+            quantity,
+            quality,
+            block.timestamp
+        );
     }
+
+    // Event for create milk collector batch
+    event CreateMilkCollectorBatchEvent(
+        uint256 indexed batchId,
+        uint256 collectorId,
+        uint256 batchCreatedTime,
+        uint256 quantity,
+        uint256 quality
+    );
 
     // Function to create a batch by milk collectors
     function createMilkCollectorBatch(
@@ -171,6 +201,14 @@ contract Milk {
             quality,
             false,
             block.timestamp
+        );
+
+        emit CreateMilkCollectorBatchEvent(
+            batchId,
+            collectorId,
+            block.timestamp,
+            quantity,
+            quality
         );
     }
 

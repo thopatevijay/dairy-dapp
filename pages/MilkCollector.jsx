@@ -1,116 +1,18 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useUserContext } from '../common/Provider';
 import AccessDenied from "./components/AccessDenied";
-import { getCollctedMilk, getFarmers } from '../common/Provider/lib/helper';
 import AddMilkCollection from './components/AddMilkCollection';
 import AddFarmer from './components/AddFarmer';
-import moment from 'moment';
-import { getAllBatches, getBatchCollectionIds } from '../database/milk-collector.controller';
 import MilkCollectorBatches from './components/MilkCollectorBatches';
+import { useCollector } from './components/hooks/useCollector';
 
 const MilkCollector = () => {
-    const [milkCollections, setMilkCollections] = useState([]);
-    const [existingBatches, setExistingBatches] = useState([]);
-    const [farmers, setFarmers] = useState([]);
     const [activeTab, setActiveTab] = useState("milk-collection");
     const [error, setError] = useState('');
     const { user } = useUserContext();
     const router = useRouter();
-
-    const convertTimestamp = (timestamp) => {
-        return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
-    };
-
-    const getAllBatchesList = useCallback(async () => {
-        if (user) {
-            try {
-                const batches = await getAllBatches();
-
-                const batchPromises = batches.map(async (batch) => {
-                    const collectionIds = await getBatchCollectionIds(batch.batchId);
-
-                    return { ...batch, collectionIds: collectionIds };
-                });
-                const batchesWithCollectionIds = await Promise.all(batchPromises);
-
-
-                return batchesWithCollectionIds;
-            } catch (e) {
-                console.log(e);
-                setError('An error occurred. Please try again later.');
-            }
-        }
-    }, [user]);
-
-    const getMillColletionList = useCallback(async () => {
-        if (user) {
-            try {
-                const milkCollections = await getCollctedMilk();
-                const farmers = await getFarmers();
-
-                const milkCollectionsWithFarmerName = milkCollections.map((milkCollection) => {
-                    const farmer = farmers.find((farmer) => farmer.farmerId === milkCollection.farmerId);
-                    const newTime = convertTimestamp(milkCollection.timestamp);
-
-                    return { ...milkCollection, farmerName: farmer.name, timestamp: newTime }
-                })
-
-                const filterMilkCollectionByCollectorID = milkCollectionsWithFarmerName.filter((collection) =>
-                    collection.milkCollectorId === user.id
-                )
-
-                const batchesWithCollectionIds = await getAllBatchesList();
-
-                const allCollectionIds = batchesWithCollectionIds.map((batch) => batch.collectionIds).flat();
-                const uniqueCollectionIds = [...new Set(allCollectionIds)];
-
-                const filteredMilkCollectionsExcludingBatches = filterMilkCollectionByCollectorID.filter(
-                    (collection) => !uniqueCollectionIds.includes(collection.collectionId)
-                );
-
-                const timestampConvertedBatces = batchesWithCollectionIds.map((batch) => {
-                    const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
-                    const statusUpdateTime = convertTimestamp(batch.statusUpdateTime);
-
-                    return { ...batch, batchCreatedTime, statusUpdateTime }
-                })
-
-                const filterBatchesByCollectorId = timestampConvertedBatces.filter((batch) =>
-                    batch.collectorId === user.id
-                );
-
-                setExistingBatches(filterBatchesByCollectorId);
-                setMilkCollections(filteredMilkCollectionsExcludingBatches);
-            } catch (e) {
-                console.log(e);
-                setError('An error occurred. Please try again later.');
-            }
-        }
-    }, [getAllBatchesList, user, setExistingBatches]);
-
-    const getFarmersList = useCallback(async () => {
-        if (user) {
-            try {
-                const farmers = await getFarmers();
-                const filterFarmersByMilkCollectorID = farmers.filter((farmer) =>
-                    farmer.milkCollectorId === user.id
-                )
-                setFarmers(filterFarmersByMilkCollectorID);
-            } catch (e) {
-                console.log(e);
-                setError('An error occurred. Please try again later.');
-            }
-        }
-    }, [user]);
-
-    useEffect(() => {
-        const interval = setInterval(() => {
-            getMillColletionList();
-            getFarmersList();
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [getFarmersList, getMillColletionList]);
+    const { farmers, milkCollections, existingBatches } = useCollector({ user });
 
 
     if (user && user.role !== "milkcollector") {
