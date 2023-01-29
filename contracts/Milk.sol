@@ -212,6 +212,14 @@ contract Milk {
         );
     }
 
+    // Event for create processor batch
+    event CreateProcessorBatchEvent(
+        uint256 indexed batchId,
+        uint256 batchCreatedTime,
+        uint256 quantity,
+        uint256 quality
+    );
+
     // Function to create a batch by milk processor
     function createProcessorBatch(
         uint256[] memory collectorBatchesIds,
@@ -251,6 +259,13 @@ contract Milk {
             productionStatus,
             distributorStatus,
             retailerStatus
+        );
+
+        emit CreateProcessorBatchEvent(
+            batchId,
+            block.timestamp,
+            quantity,
+            quantity
         );
     }
 

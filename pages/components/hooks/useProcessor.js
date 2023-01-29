@@ -276,6 +276,11 @@ export function useProcessor() {
         contractInstance.on("CreateMilkCollectorBatchEvent", () => getAllCollectorsBatchesList());
 
         contractInstance.on("AcceptBatchByCollectorsEvent", () => getAllCollectorsBatchesList());
+        
+        contractInstance.on("CreateProcessorBatchEvent", () => {
+            getAllCollectorsBatchesList();
+            getAllProcessorBatchesList();
+        });
 
     }, [getAllCollectorsBatchesList, getAllProcessorBatchesList]);
 
