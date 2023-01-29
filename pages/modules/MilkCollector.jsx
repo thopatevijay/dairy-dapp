@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useUserContext } from '../common/Provider';
-import AccessDenied from "./components/AccessDenied";
-import AddMilkCollection from './components/AddMilkCollection';
-import AddFarmer from './components/AddFarmer';
-import MilkCollectorBatches from './components/MilkCollectorBatches';
-import { useCollector } from './components/hooks/useCollector';
+import { useUserContext } from '../../common/Provider';
+import AccessDenied from "../components/AccessDenied";
+import AddMilkCollection from '../components/AddMilkCollection';
+import AddFarmer from '../components/AddFarmer';
+import MilkCollectorBatches from '../components/MilkCollectorBatches';
+import { useCollector } from '../components/hooks/useCollector';
 
 const MilkCollector = () => {
     const [activeTab, setActiveTab] = useState("milk-collection");

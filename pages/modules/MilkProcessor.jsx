@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/router';
-import { useUserContext } from '../common/Provider';
-import AccessDenied from "./components/AccessDenied";
-import BatchesByCollectors from './components/BatchesByCollectors';
-import Production from './components/Production';
-import { useProcessor } from './components/hooks/useProcessor';
+import { useUserContext } from '../../common/Provider';
+import AccessDenied from "../components/AccessDenied";
+import BatchesByCollectors from '../components/BatchesByCollectors';
+import Production from '../components/Production';
+import { useProcessor } from '../components/hooks/useProcessor';
 
 const MilkProcessor = () => {
     const [activeTab, setActiveTab] = useState("batches");

@@ -1,9 +1,9 @@
 import { useContext } from 'react';
 import { useRouter } from 'next/router';
-import { useUserContext } from '../common/Provider';
-import AccessDenied from "./components/AccessDenied";
-import { useProcessor } from './components/hooks/useProcessor';
-import Production from './components/Production';
+import { useUserContext } from '../../common/Provider';
+import AccessDenied from "../components/AccessDenied";
+import { useProcessor } from '../components/hooks/useProcessor';
+import Production from '../components/Production';
 
 const Distributor = () => {
     const { user } = useUserContext();
