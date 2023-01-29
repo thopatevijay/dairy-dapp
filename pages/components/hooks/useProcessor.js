@@ -180,7 +180,7 @@ export function useProcessor() {
             console.log(e);
             setError('An error occurred. Please try again later.');
         }
-    }, [getBatchCollectionIds, getBatchesAndIDs]);
+    }, [getBatchCollectionIds, getBatchesAndIDs, setBatchesByCollectors]);
 
     const getAllProcessorBatchesList = useCallback(async () => {
         try {
@@ -201,6 +201,7 @@ export function useProcessor() {
     const getAllAcceptedBatches = useCallback(
         async () => {
             const filterBatchesByAccepted = batchesByCollectors.filter((batch) => batch.accepted === true);
+            console.log(filterBatchesByAccepted);
             setGetAcceptedBatches(filterBatchesByAccepted);
         },
         [batchesByCollectors, setGetAcceptedBatches],
@@ -265,13 +266,13 @@ export function useProcessor() {
     }
 
     useEffect(() => {
-        const interval = setInterval(() => {
+            getAllAcceptedBatches();
+    }, [getAllAcceptedBatches]);
+
+    useEffect(() => {
             getAllCollectorsBatchesList();
             getAllProcessorBatchesList();
-            getAllAcceptedBatches();
-        }, 1000);
-        return () => clearInterval(interval);
-    }, [getAllAcceptedBatches, getAllCollectorsBatchesList, getAllProcessorBatchesList]);
+    }, [getAllCollectorsBatchesList, getAllProcessorBatchesList]);
 
     return {
         batchesByProcessor,
