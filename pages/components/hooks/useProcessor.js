@@ -189,7 +189,52 @@ export function useProcessor() {
             const batchesWithLocalTimestamp = batchesWithCollectionIds.map((batch) => {
                 const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
 
-                return { ...batch, batchCreatedTime }
+                const inProductionStatus = {
+                    ...batch.productionStatus.inProductionStatus,
+                    updatedTime: batch.productionStatus.inProductionStatus.updatedTime === "0"
+                        ? batch.productionStatus.inProductionStatus.updatedTime
+                        : convertTimestamp(batch.productionStatus.inProductionStatus.updatedTime)
+                }
+                const productionDoneStatus = {
+                    ...batch.productionStatus.productionDoneStatus,
+                    updatedTime: batch.productionStatus.productionDoneStatus.updatedTime === "0"
+                        ? batch.productionStatus.productionDoneStatus.updatedTime
+                        : convertTimestamp(batch.productionStatus.productionDoneStatus.updatedTime)
+                }
+
+                const moveToDistributorStatus = {
+                    ...batch.productionStatus.moveToDistributorStatus,
+                    updatedTime: batch.productionStatus.moveToDistributorStatus.updatedTime === "0"
+                        ? batch.productionStatus.moveToDistributorStatus.updatedTime
+                        : convertTimestamp(batch.productionStatus.moveToDistributorStatus.updatedTime)
+                }
+
+                const atDistributorStatus = {
+                    ...batch.distributorStatus.atDistributorStatus,
+                    updatedTime: batch.distributorStatus.atDistributorStatus.updatedTime === "0"
+                        ? batch.distributorStatus.atDistributorStatus.updatedTime
+                        : convertTimestamp(batch.distributorStatus.atDistributorStatus.updatedTime)
+                }
+
+                const moveToRetailerStatus = {
+                    ...batch.distributorStatus.moveToRetailerStatus,
+                    updatedTime: batch.distributorStatus.moveToRetailerStatus.updatedTime === "0"
+                        ? batch.distributorStatus.moveToRetailerStatus.updatedTime
+                        : convertTimestamp(batch.distributorStatus.moveToRetailerStatus.updatedTime)
+                }
+
+                const retailerStatus = {
+                    ...batch.retailerStatus,
+                    updatedTime: batch.retailerStatus.updatedTime === "0"
+                        ? batch.retailerStatus.updatedTime
+                        : convertTimestamp(batch.retailerStatus.updatedTime)
+                }
+                return {
+                    ...batch, batchCreatedTime,
+                    productionStatus: { inProductionStatus, productionDoneStatus, moveToDistributorStatus },
+                    distributorStatus: { atDistributorStatus, moveToRetailerStatus },
+                    retailerStatus,
+                }
             })
             setBatchesByProcessor(batchesWithLocalTimestamp);
         } catch (e) {

@@ -436,6 +436,7 @@ contract Milk {
 
         batch.distributorStatus.atDistributor.accepted = accepted;
         batch.distributorStatus.atDistributor.updatedTime = block.timestamp;
+        batch.distributorStatus.atDistributor.quantity = quantity;
         batch.distributorStatus.atDistributor.quality = quality;
 
         emit AcceptBatchByProcessorEvent(
@@ -471,6 +472,7 @@ contract Milk {
 
         batch.retailerStatus.accepted = accepted;
         batch.retailerStatus.updatedTime = block.timestamp;
+        batch.retailerStatus.quantity = quantity;
         batch.retailerStatus.quality = quality;
 
         emit AcceptBatchByDistributorEvent(

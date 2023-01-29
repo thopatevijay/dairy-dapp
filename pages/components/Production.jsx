@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { RenderStatusAndActions } from './RenderStatusAndActions';
+import Timeline from './Timeline';
 
 const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer }) => {
     const [activeRow, setActiveRow] = useState(null);
-
     const handleRowClick = (index) => {
         setActiveRow(index === activeRow ? null : index);
     }
@@ -44,75 +44,14 @@ const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer
                                             </td>
                                         </tr>
                                         {index === activeRow && (
-                                            <tr className="bg-gray-100">
-                                                <td colSpan={7} className="px-4 py-2 text-xs">
+                                            <tr className='ml-8'>
+                                                <td colSpan={7} className="px-4 py-2 text-xs text-left">
                                                     <div>
-                                                        <div className="flex justify-center">
-                                                            <span className="inline-block leading-1 font-medium text-blue-500">
-                                                                Processing finished time :
-                                                            </span>
-                                                            <span className="inline-block leading-1 ml-1 font-medium text-blue-500">
-                                                                11:01:09 AM : 26/01/2023
-                                                            </span>
-                                                        </div>
-                                                        <div className='mt-2 '>
-                                                            <div className="flex justify-center">
-                                                                <span className="inline-block leading-1 font-medium text-[#a68383]">
-                                                                    Production started time :
-                                                                </span>
-                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#a68383]">
-                                                                    11:01:09 AM : 26/01/2023
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex justify-center">
-                                                                <span className="inline-block leading-1 font-medium text-[#a68383] ml-12">
-                                                                    Quantity :
-                                                                </span>
-                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#a68383]">
-                                                                    100
-                                                                </span>
-                                                                <span className="inline-block leading-1 font-medium text-[#a68383] ml-12">
-                                                                    Quality :
-                                                                </span>
-                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#a68383]">
-                                                                    100
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div className='mt-2'>
-                                                            <div className="flex justify-center">
-                                                                <span className="inline-block leading-1 font-medium text-[#224040]">
-                                                                    Production finished time :
-                                                                </span>
-                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#224040]">
-                                                                    11:01:09 AM : 26/01/2023
-                                                                </span>
-                                                            </div>
-                                                            <div className="flex justify-center">
-                                                                <span className="inline-block leading-1 font-medium text-[#224040] ml-12">
-                                                                    Quantity :
-                                                                </span>
-                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#224040]">
-                                                                    100
-                                                                </span>
-                                                                <span className="inline-block leading-1 font-medium text-[#224040] ml-12">
-                                                                    Quality :
-                                                                </span>
-                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#224040]">
-                                                                    100
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                        <div className='mt-2'>
-                                                            <div className="flex justify-center">
-                                                                <span className="inline-block leading-1 font-medium text-[#8465c7]">
-                                                                    Sent to distributor time :
-                                                                </span>
-                                                                <span className="inline-block leading-1 ml-1 font-medium text-[#8465c7]">
-                                                                    11:01:09 AM : 26/01/2023
-                                                                </span>
-                                                            </div>
-                                                        </div>
+                                                        <Timeline
+                                                            productionStatus={batch.productionStatus}
+                                                            distributorStatus={batch.distributorStatus}
+                                                            retailerStatus={batch.retailerStatus}
+                                                        />
                                                     </div>
                                                 </td>
                                             </tr>
