@@ -98,6 +98,12 @@ contract Milk {
         RetailerUpdate retailerStatus;
     }
 
+    // Struct to represent a product by batch ID
+    struct Product {
+        uint256 productId;
+        uint256 batchId;
+    }
+
     // Mapping to store the farmers
     mapping(uint256 => Farmer) public farmers;
 
@@ -109,6 +115,9 @@ contract Milk {
 
     // Maping to store the processor batches
     mapping(uint256 => BatchByProcessor) public processorBatches;
+
+    // Mapping to store the product ids
+    mapping(uint256 => Product) public products;
 
     // Counter for assigning unique IDs to farmers
     uint256 public farmerIdCounter = 1;
@@ -313,7 +322,8 @@ contract Milk {
         bool isInProduction,
         uint256 quantity,
         uint256 quality,
-        uint256 updatedTime
+        uint256 updatedTime,
+        uint256[] productIds
     );
 
     // Event for finish production
@@ -362,7 +372,8 @@ contract Milk {
         uint256 batchId,
         bool isInProduction,
         uint256 quantity,
-        uint256 quality
+        uint256 quality,
+        uint256[] memory productIds
     ) public {
         BatchByProcessor storage batch = processorBatches[batchId];
 
@@ -371,12 +382,18 @@ contract Milk {
         batch.productionStatus.inProduction.quality = quality;
         batch.productionStatus.inProduction.updatedTime = block.timestamp;
 
+        // Loop to add to product ids with batch
+        for (uint256 i = 0; i < productIds.length; i++) {
+            products[productIds[i]] = Product(productIds[i], batchId);
+        }
+
         emit StartProductionEvent(
             batchId,
             isInProduction,
             quantity,
             quality,
-            block.timestamp
+            block.timestamp,
+            productIds
         );
     }
 
