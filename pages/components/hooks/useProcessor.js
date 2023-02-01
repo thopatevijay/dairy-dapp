@@ -284,7 +284,11 @@ export function useProcessor() {
 
     const handleSendToProduction = async (batchId, isInProduction, quantity, quality) => {
         try {
-            const txn = await contractInstance.startProduction(batchId, isInProduction, quantity, quality);
+            const productIds = [];
+            for(let i = 1; i <= quantity; i++) {
+                productIds.push(batchId * 1000 + i);
+            }
+            const txn = await contractInstance.startProduction(batchId, isInProduction, quantity, quality, productIds);
             return txn;
         } catch (error) {
             console.log(error)
