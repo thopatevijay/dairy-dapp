@@ -8,7 +8,7 @@ const ProductDetails = () => {
   console.log(productId);
   return (
     <div className='flex justify-center mt-10'>
-      <ConsumerTimeLine />
+      <ConsumerTimeLine productId={productId}/>
     </div>
   )
 }
