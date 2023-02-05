@@ -5,6 +5,7 @@ import { contractInstance } from "../../utils/ethers";
 export function useProductId() {
     const [data, setData] = useState([]);
     const [productCount, setProductCount] = useState(null);
+    const [productData, setProductData] = useState([]);
 
     const getProductCount = useCallback(async () => {
         try {
@@ -25,15 +26,15 @@ export function useProductId() {
             }
             const productData = products.map(product => {
                 return {
-                    productId: product[0].toString(),
+                    productId: product[0].toNumber(),
                     batchId: product[1].toString()
                 };
             });
-            console.log(productData);
+            setProductData(productData);
         } catch (error) {
             console.log(error);
         }
-    }, [productCount]);
+    }, [productCount, setProductData]);
 
 
     useEffect(() => {
@@ -47,5 +48,5 @@ export function useProductId() {
 
     }, [getProductCount, getProductDetails]);
 
-    return { data, productCount }
+    return { data, productCount, productData }
 }

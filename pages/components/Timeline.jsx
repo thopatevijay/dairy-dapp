@@ -37,6 +37,11 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                     <div className="flex flex-start items-center">
                         <div className={`${productionDoneStatus.isProductionDone ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Production finished</h4>
+                        {productionDoneStatus.isProductionDone &&
+                            <span className="text-blue-600 px-5 -mt-2 ml-10 rounded-full cursor-pointer" >
+                                See product codes
+                            </span>
+                        }
                     </div>
                     <div className="ml-6 mb-6 ">
                         <a className="text-blue-600 hover:text-blue-700 

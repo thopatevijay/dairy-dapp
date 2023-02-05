@@ -8,7 +8,7 @@ export function useProcessor() {
     const [batchesByCollectors, setBatchesByCollectors] = useState([]);
     const [getAcceptedBatches, setGetAcceptedBatches] = useState([]);
     const [error, setError] = useState('');
-    const { productCount } = useProductId();
+    const { productCount, productData } = useProductId();
 
     const convertTimestamp = (timestamp) => {
         return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
@@ -190,6 +190,9 @@ export function useProcessor() {
             const batchesWithLocalTimestamp = batchesWithCollectionIds.map((batch) => {
                 const batchCreatedTime = convertTimestamp(batch.batchCreatedTime);
 
+                const productIds = productData.filter((product) => product.batchId === batch.batchId);
+                const productIdList = productIds.map((e) => e.productId)
+
                 const inProductionStatus = {
                     ...batch.productionStatus.inProductionStatus,
                     updatedTime: batch.productionStatus.inProductionStatus.updatedTime === "0"
@@ -235,14 +238,15 @@ export function useProcessor() {
                     productionStatus: { inProductionStatus, productionDoneStatus, moveToDistributorStatus },
                     distributorStatus: { atDistributorStatus, moveToRetailerStatus },
                     retailerStatus,
+                    productIdList
                 }
-            })
+            });
             setBatchesByProcessor(batchesWithLocalTimestamp);
         } catch (e) {
             console.log(e);
             setError('An error occurred. Please try again later.');
         }
-    }, [getBatchesAndIDs]);
+    }, [getBatchesAndIDs, productData]);
 
     const getAllAcceptedBatches = useCallback(
         async () => {
