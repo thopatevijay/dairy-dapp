@@ -1,8 +1,10 @@
 import React from 'react'
+import { useRouter } from "next/router";
 
-const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
+const Timeline = ({ batchId, productionStatus, distributorStatus, retailerStatus }) => {
     const { inProductionStatus, productionDoneStatus, moveToDistributorStatus } = productionStatus;
     const { atDistributorStatus, moveToRetailerStatus } = distributorStatus;
+    const router = useRouter();
 
     return (
         <div>
@@ -37,6 +39,13 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                     <div className="flex flex-start items-center">
                         <div className={`${productionDoneStatus.isProductionDone ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Production finished</h4>
+                        {productionDoneStatus.isProductionDone &&
+                            <span className="text-blue-600 px-5 -mt-2 ml-10 rounded-full cursor-pointer"
+                                onClick={() => router.push(`/BatchId/${batchId}`)}
+                            >
+                                See product codes
+                            </span>
+                        }
                     </div>
                     <div className="ml-6 mb-6 ">
                         <a className="text-blue-600 hover:text-blue-700 
@@ -44,7 +53,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                             {productionDoneStatus.updatedTime}
                         </a>
                         <p className="text-gray-700 mt-2">Quantity : {productionDoneStatus.quantity}</p>
-                        <p className="text-gray-700 mt-1">Quality : {productionDoneStatus.quantity}</p>
+                        <p className="text-gray-700 mt-1">Quality : {productionDoneStatus.quality}</p>
                     </div>
                 </li>
                 <li>
@@ -70,7 +79,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                             {atDistributorStatus.updatedTime}
                         </a>
                         <p className="text-gray-700 mt-2">Quantity : {atDistributorStatus.quantity}</p>
-                        <p className="text-gray-700 mt-1">Quality : {atDistributorStatus.quantity}</p>
+                        <p className="text-gray-700 mt-1">Quality : {atDistributorStatus.quality}</p>
                     </div>
                 </li>
                 <li>
@@ -96,7 +105,7 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                             {retailerStatus.updatedTime}
                         </a>
                         <p className="text-gray-700 mt-2">Quantity : {retailerStatus.quantity}</p>
-                        <p className="text-gray-700 mt-1">Quality : {retailerStatus.quantity}</p>
+                        <p className="text-gray-700 mt-1">Quality : {retailerStatus.quality}</p>
                     </div>
                 </li>
             </ol>

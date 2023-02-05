@@ -131,6 +131,9 @@ contract Milk {
     // Counter for assigning unique IDs to processorBatches
     uint256 public processorBatchIdCounter = 1;
 
+    // Counter for product
+    uint256 public productCount = 0;
+
     // Event for add farmer
     event AddFarmerEvent(uint256 indexed milkCollectorId, string name);
 
@@ -385,6 +388,7 @@ contract Milk {
         // Loop to add to product ids with batch
         for (uint256 i = 0; i < productIds.length; i++) {
             products[productIds[i]] = Product(productIds[i], batchId);
+            productCount++;
         }
 
         emit StartProductionEvent(
