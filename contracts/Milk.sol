@@ -132,7 +132,7 @@ contract Milk {
     uint256 public processorBatchIdCounter = 1;
 
     // Counter for product
-    uint256 public productCount = 1;
+    uint256 public productCount = 0;
 
     // Event for add farmer
     event AddFarmerEvent(uint256 indexed milkCollectorId, string name);

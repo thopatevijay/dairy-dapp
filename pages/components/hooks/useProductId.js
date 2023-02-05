@@ -19,7 +19,7 @@ export function useProductId() {
         try {
             let products = [];
 
-            for (let i = 1; i < productCount; i++) {
+            for (let i = 1; i <= productCount; i++) {
                 const product = await contractInstance.products(i);
                 products.push(product);
             }
@@ -40,7 +40,10 @@ export function useProductId() {
         getProductDetails();
         getProductCount();
 
-        contractInstance.on("StartProductionEvent", () => getProductDetails());
+        contractInstance.on("StartProductionEvent", () => {
+            getProductDetails();
+            getProductCount();
+        });
 
     }, [getProductCount, getProductDetails]);
 
