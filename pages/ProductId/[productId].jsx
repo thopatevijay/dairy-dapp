@@ -3,9 +3,8 @@ import { useRouter } from "next/router";
 
 const ProductDetails = () => {
     const router = useRouter();
-    const { productId, batchId } = router.query;
-    console.log(productId)
-    console.log(batchId);
+    const { productId } = router.query;
+    console.log(productId);
   return (
     <div>[ProductDetails]</div>
   )

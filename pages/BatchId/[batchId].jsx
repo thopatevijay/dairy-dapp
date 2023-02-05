@@ -1,12 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { useProcessor } from '../components/hooks/useProcessor';
+import GenerateQRCode from '../components/GenerateQRCode';
 
 const ProductCodes = () => {
-    const router = useRouter();
-    const { batchId } = router.query;
-    console.log(batchId)
+  const [productCodeList, setProductCodeList] = useState([]);
+  const router = useRouter();
+  const { batchId } = router.query;
+  const { batchesByProcessor } = useProcessor();
+
+  const getProductIdByBatch = useCallback(
+    async () => {
+      if (batchesByProcessor.length) {
+        const productIds = batchesByProcessor.find((e) =>
+          e.batchId === batchId)?.productIdList;
+        setProductCodeList(productIds)
+      }
+    },
+    [batchId, batchesByProcessor, setProductCodeList],
+  )
+
+  useEffect(() => {
+    getProductIdByBatch();
+
+  }, [getProductIdByBatch])
+
+
   return (
-    <div>ProductCodes</div>
+    <div>
+      <GenerateQRCode productCodeList={productCodeList} />
+    </div>
   )
 }
 
