@@ -2,6 +2,7 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { useProcessor } from '../components/hooks/useProcessor';
 import GenerateQRCode from '../components/GenerateQRCode';
+import Spinner from '../components/Spinner';
 
 const ProductCodes = () => {
   const [productCodeList, setProductCodeList] = useState([]);
@@ -28,7 +29,10 @@ const ProductCodes = () => {
 
   return (
     <div>
-      <GenerateQRCode productCodeList={productCodeList} />
+      {batchesByProcessor.length ?
+        <GenerateQRCode productCodeList={productCodeList} />
+        : <Spinner />
+      }
     </div>
   )
 }
