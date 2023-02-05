@@ -1,13 +1,14 @@
 import { useState, useCallback, useEffect } from 'react';
 import moment from 'moment';
 import { contractInstance } from "../../utils/ethers";
+import { useProductId } from './useProductId';
 
 export function useProcessor() {
     const [batchesByProcessor, setBatchesByProcessor] = useState([]);
     const [batchesByCollectors, setBatchesByCollectors] = useState([]);
     const [getAcceptedBatches, setGetAcceptedBatches] = useState([]);
     const [error, setError] = useState('');
-
+    const { productCount } = useProductId();
 
     const convertTimestamp = (timestamp) => {
         return moment.unix(timestamp).format("h:mm:ss A : DD/MM/YYYY");
@@ -285,8 +286,8 @@ export function useProcessor() {
     const handleSendToProduction = async (batchId, isInProduction, quantity, quality) => {
         try {
             const productIds = [];
-            for(let i = 1; i <= quantity; i++) {
-                productIds.push(batchId * 1000 + i);
+            for (let i = 1; i <= quantity; i++) {
+                productIds.push(productCount + i);
             }
             const txn = await contractInstance.startProduction(batchId, isInProduction, quantity, quality, productIds);
             return txn;
