@@ -15,7 +15,7 @@ const Navbar = () => {
         setDisplayedUser(user);
     }, [user]);
 
-    if (pathname === '/login') {
+    if (pathname === '/login' || pathname === '/ProductId/[productId]') {
         return null;
     }
     return (
