@@ -1,8 +1,10 @@
 import React from 'react'
+import { useRouter } from "next/router";
 
-const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
+const Timeline = ({ batchId, productionStatus, distributorStatus, retailerStatus }) => {
     const { inProductionStatus, productionDoneStatus, moveToDistributorStatus } = productionStatus;
     const { atDistributorStatus, moveToRetailerStatus } = distributorStatus;
+    const router = useRouter();
 
     return (
         <div>
@@ -38,7 +40,9 @@ const Timeline = ({ productionStatus, distributorStatus, retailerStatus }) => {
                         <div className={`${productionDoneStatus.isProductionDone ? `bg-green-600` : `bg-gray-400`} w-4 h-4 flex items-center justify-center rounded-full -ml-2 mr-3 -mt-2`}></div>
                         <h4 className="text-gray-800 font-semibold text-xs -mt-2">Production finished</h4>
                         {productionDoneStatus.isProductionDone &&
-                            <span className="text-blue-600 px-5 -mt-2 ml-10 rounded-full cursor-pointer" >
+                            <span className="text-blue-600 px-5 -mt-2 ml-10 rounded-full cursor-pointer"
+                                onClick={() => router.push(`/BatchId/${batchId}`)}
+                            >
                                 See product codes
                             </span>
                         }

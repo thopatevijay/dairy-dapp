@@ -48,6 +48,7 @@ const Production = ({ batchesByProcessor, isProcessor, isDistributor, isRetailer
                                                 <td colSpan={7} className="px-4 py-2 text-xs text-left">
                                                     <div>
                                                         <Timeline
+                                                            batchId={batch.batchId}
                                                             productionStatus={batch.productionStatus}
                                                             distributorStatus={batch.distributorStatus}
                                                             retailerStatus={batch.retailerStatus}
