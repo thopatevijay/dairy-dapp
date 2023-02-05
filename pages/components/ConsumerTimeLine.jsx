@@ -1,8 +1,9 @@
 import React from 'react'
 import { useConsumerTimeLine } from './hooks/useConsumerTimeLine'
+import Spinner from './Spinner';
 
 const ConsumerTimeLine = ({ productId }) => {
-    const { searchResults } = useConsumerTimeLine({ productId });
+    const { searchResults, showSpinner } = useConsumerTimeLine({ productId });
     return (
         <>
             <ol className="border-l-2 border-gray-400">
@@ -36,6 +37,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     Quality : {searchResults?.quality}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
@@ -63,6 +65,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     {searchResults?.productionStatus?.inProductionStatus.updatedTime}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
@@ -96,6 +99,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     Quality : {searchResults?.productionStatus?.inProductionStatus.quality}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
@@ -129,6 +133,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     Quality : {searchResults?.productionStatus?.productionDoneStatus.quality}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
@@ -156,6 +161,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     {searchResults?.productionStatus?.moveToDistributorStatus.updatedTime}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
@@ -189,6 +195,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     Quality : {searchResults?.distributorStatus?.atDistributorStatus.quality}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
@@ -216,6 +223,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     {searchResults?.distributorStatus?.moveToRetailerStatus.updatedTime}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
@@ -249,6 +257,7 @@ const ConsumerTimeLine = ({ productId }) => {
                                     Quality : {searchResults?.retailerStatus?.quality}
                                 </a>
                             </div>
+                            {showSpinner && <Spinner />}
                         </div>
                     </div>
                 </li>
