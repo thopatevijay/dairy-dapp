@@ -53,7 +53,7 @@ const Timeline = ({ batchId, productionStatus, distributorStatus, retailerStatus
                             {productionDoneStatus.updatedTime}
                         </a>
                         <p className="text-gray-700 mt-2">Quantity : {productionDoneStatus.quantity}</p>
-                        <p className="text-gray-700 mt-1">Quality : {productionDoneStatus.quantity}</p>
+                        <p className="text-gray-700 mt-1">Quality : {productionDoneStatus.quality}</p>
                     </div>
                 </li>
                 <li>
@@ -79,7 +79,7 @@ const Timeline = ({ batchId, productionStatus, distributorStatus, retailerStatus
                             {atDistributorStatus.updatedTime}
                         </a>
                         <p className="text-gray-700 mt-2">Quantity : {atDistributorStatus.quantity}</p>
-                        <p className="text-gray-700 mt-1">Quality : {atDistributorStatus.quantity}</p>
+                        <p className="text-gray-700 mt-1">Quality : {atDistributorStatus.quality}</p>
                     </div>
                 </li>
                 <li>
@@ -105,7 +105,7 @@ const Timeline = ({ batchId, productionStatus, distributorStatus, retailerStatus
                             {retailerStatus.updatedTime}
                         </a>
                         <p className="text-gray-700 mt-2">Quantity : {retailerStatus.quantity}</p>
-                        <p className="text-gray-700 mt-1">Quality : {retailerStatus.quantity}</p>
+                        <p className="text-gray-700 mt-1">Quality : {retailerStatus.quality}</p>
                     </div>
                 </li>
             </ol>
