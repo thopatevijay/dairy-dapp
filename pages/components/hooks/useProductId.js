@@ -6,15 +6,17 @@ export function useProductId() {
     const [data, setData] = useState([]);
     const [productCount, setProductCount] = useState(null);
 
-    const getProductCount = useCallback(async() => {
-        const productCount = await contractInstance.productCount();
-        setProductCount(productCount.toNumber());
-    },[setProductCount]);
+    const getProductCount = useCallback(async () => {
+        try {
+            const productCount = await contractInstance.productCount();
+            setProductCount(productCount.toNumber());
+        } catch (error) {
+
+        }
+    }, [setProductCount]);
 
     const getProductDetails = useCallback(async () => {
         try {
-            const productCount = await contractInstance.productCount();
-
             let products = [];
 
             for (let i = 1; i < productCount; i++) {
@@ -31,7 +33,7 @@ export function useProductId() {
         } catch (error) {
             console.log(error);
         }
-    }, []);
+    }, [productCount]);
 
 
     useEffect(() => {
@@ -42,8 +44,5 @@ export function useProductId() {
 
     }, [getProductCount, getProductDetails]);
 
-    return {
-        data,
-        productCount
-    }
+    return { data, productCount }
 }
